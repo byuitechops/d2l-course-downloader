@@ -2,7 +2,16 @@
 /*eslint no-unused-vars:0, no-console:0*/
 
 var getCookies = require('./getCookies.js'),
-    settings = {};
+    settings = {
+        userName: 'userName',
+        userNameSelector: '#userName',
+        password: 'password',
+        passwordSelector: '#password',
+        doneButtonSelector: '',
+        loginURL: '',
+        afterLoginURL: '',
+        show: true
+    };
 
 getCookies(settings, function (err, cookies) {
     if (err) {

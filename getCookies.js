@@ -26,7 +26,7 @@ module.exports = function getCookies(settings, cb) {
         //click the log in button
         .click(settings.doneButtonSelector)
         //logins have a lot of redirects so wait till we get to the right page
-        .waitURL(settings.waitURL)
+        .waitURL(settings.afterLoginURL)
         //now that we have logged in steal the cookies
         .cookies.get()
         .end()
