@@ -34,7 +34,6 @@ var promptSettings = [{
     name: 'subdomain',
     type: 'string',
     description: 'Is this for pathway? (yes/no)',
-    required: true,
     before: (value) => {
       if (value.toLowerCase() != 'yes') {
         return 'no';
