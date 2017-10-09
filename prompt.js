@@ -1,7 +1,7 @@
 var prompt = require('prompt');
 
 var promptSettings = [{
-    name: 'username',
+    name: 'userName',
     type: 'string',
     description: 'Enter your username',
     required: true,

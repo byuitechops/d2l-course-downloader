@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/byuitechops/d2l-course-downloader#readme",
   "dependencies": {
+    "async": "^2.5.0",
     "d3-dsv": "^1.0.7",
     "nightmare": "^2.10.0",
     "nightmare-helpers": "git+https://github.com/byuitechops/nightmare-helpers.git",
