@@ -20,6 +20,7 @@
     "async": "^2.5.0",
     "d3-dsv": "^1.0.7",
     "nightmare": "^2.10.0",
+    "nightmare-download-manager": "^0.2.4",
     "nightmare-helpers": "git+https://github.com/byuitechops/nightmare-helpers.git",
     "prompt": "^1.0.0"
   }
