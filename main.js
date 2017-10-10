@@ -11,14 +11,14 @@ getPrompt((err, promptData) => {
   var domain = promptData === 'yes' ? 'pathway' : 'byui';
 
   /* Read in the CSV */
-  fs.readFile(path.resolve(promptData.csvName), 'utf8', (err, data) => {
+  fs.readFile(path.join('.', promptData.csvName), 'utf8', (err, data) => {
     if (err) {
       console.log(err);
     } else {
 
       /* Parse the CSV */
       var csvData = d3.csvParse(data);
-      console.log(csvData);
+      // console.log(csvData);
 
       /* Determine settings */
       var settings = {
@@ -43,7 +43,7 @@ getPrompt((err, promptData) => {
               domain: domain,
               ou: course.ou,
               name: course.name,
-              fileOutPath: path.resolve(course.name),
+              fileOutPath: path.join('.', course.name),
               nightmareCookies: cookies,
               loginURL: settings.loginURL
             };
