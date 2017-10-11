@@ -58,7 +58,13 @@ getPrompt((err, promptData) => {
                             if (errorFS) {
                                 console.log(chalk.red(errorFS));
                             } else {
-                                console.log(results.filter(course => !course.success));
+                                var failList = results.filter(course => !course.success);
+                                if (failList.length > 0) {
+                                    console.log(chalk.green(`All ${chalk.yellow(results.length)} courses successfully downloaded.`));
+                                } else {
+                                    console.log(chalk.brightRed(`These ${chalk.red(failList.length)} courses failed to download:`));
+                                    console.log(failList);
+                                }
                             }
                         });
                     });
