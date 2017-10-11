@@ -6,6 +6,7 @@ var Nightmare = require('nightmare');
 require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
 var path = require('path');
+var chalk = require('chalk');
 
 //this is where the magic happens
 module.exports = function dlCourse(settings, callback) {
@@ -32,7 +33,6 @@ module.exports = function dlCourse(settings, callback) {
     //set up what happens when we cause a download
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
-            console.log('Starting');
             //set the name and location of the course zip files
             nightmare.emit('download', `./_exports/${settings.name}.zip`, downloadItem);
         }
@@ -41,12 +41,12 @@ module.exports = function dlCourse(settings, callback) {
                 name: settings.name,
                 ou: settings.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
-                percent: Math.ceil(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
+                percent: Math.floor(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
             }
             //print to the console where we are with the download
             //show % and name and ou
             //show what it has but add the others in one line
-            console.log("Downloaded: ", getPercent.name, getPercent.ou, getPercent.percent + '%',
+            console.log("Downloaded: ", chalk.yellow(getPercent.name), getPercent.ou, chalk.cyan(getPercent.percent + '%'),
                 downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes");
         }
     });

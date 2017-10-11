@@ -5,6 +5,7 @@ var asyncLib = require('async');
 var getPrompt = require('./prompt.js');
 var getCookies = require('./getCookies.js');
 var dlCourse = require('./dlCourse.js');
+var chalk = require('chalk');
 
 getPrompt((err, promptData) => {
     var domain = promptData === 'yes' ? 'pathway' : 'byui';
@@ -33,7 +34,7 @@ getPrompt((err, promptData) => {
             /* Get them cookies */
             getCookies(settings, (errorCookies, cookies) => {
                 if (errorCookies) {
-                    console.log(errorCookies);
+                    console.log(chalk.red(errorCookies));
                 } else {
                     // console.log(csvData);
                     /* Set parameters for download */
@@ -53,7 +54,7 @@ getPrompt((err, promptData) => {
                     /* Download ALL the courses */
                     asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (errorDl, results) => {
                         fs.writeFile('./results.txt', results, err => {
-                            console.log('SUCCESS!');
+                            console.log(results.filter(course => !course.success));
                         });
                     });
                 }

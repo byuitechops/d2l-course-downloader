@@ -1,4 +1,5 @@
 var prompt = require('prompt');
+var chalk = require('chalk');
 
 var promptSettings = [{
     name: 'userName',
@@ -27,7 +28,7 @@ var promptSettings = [{
     type: 'number',
     description: 'Enter the max number of concurrent downloads allowed',
     required: true,
-    default: '50',
+    default: '15',
     message: 'Must be a number.'
   },
   {
