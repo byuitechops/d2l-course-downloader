@@ -114,7 +114,12 @@ module.exports = function dlCourse(settings, callback) {
         })
         .catch(function (error) {
             console.log(chalk.red(error));
-            callback(null, settings.ou);
+            callback(null, null, {
+                success: false,
+                name: settings.name,
+                ou: settings.ou,
+                err: chalk.red(error)
+            });
         });
 }
 //do we need these anymore? This was included multiple times but i don't think its necessary. THe program has run just fine without it.
