@@ -97,7 +97,7 @@ module.exports = function dlCourse(settings, callback) {
         //go to confirm page
         .click(selectors.continue)
         //go to zipping proccess page
-        .setWaitTimeout(2, 0, 0)
+        .setWaitTimeout(10, 0, 0)
         .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.5-daylight.6/images/tier1/check.svg"]')
         .click('button[primary]:not([disabled="disabled"])')
         //be done and click finish
