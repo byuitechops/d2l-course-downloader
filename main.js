@@ -51,7 +51,7 @@ getPrompt((err, promptData) => {
                         };
                     });
                     /* Download ALL the courses */
-                    asyncLib.map(courses, dlCourse, (errorDl, results) => {
+                    asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (errorDl, results) => {
                         fs.writeFile('./results.txt', results, err => {
                             console.log('SUCCESS!');
                         });
