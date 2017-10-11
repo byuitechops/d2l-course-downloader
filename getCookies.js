@@ -26,13 +26,17 @@ module.exports = function getCookies(settings, cb) {
         //click the log in button
         .click(settings.doneButtonSelector)
         //logins have a lot of redirects so wait till we get to the right page
-        .waitURL(settings.afterLoginURL)
+        .wait(function (url) {
+            url = new RegExp(url);
+            return url.test(document.location.href);
+        }, 'https://byui.brightspace.com/d2l/home')
         //now that we have logged in steal the cookies
         .cookies.get()
         .end()
         .then(function (cookies) {
             //send the cookies back
             console.log("Cookies Retrieved!");
+            console.log(cookies);
             cb(null, cookies);
         })
         //if anything errors it goes here. pass it back to the user

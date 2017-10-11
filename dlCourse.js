@@ -39,7 +39,7 @@ module.exports = function dlCourse(settings, callback) {
                 name: settings.name,
                 ou: settings.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
-                percent: divide * 100
+                percent: downloadItem.receivedBytes / downloadItem.totalBytes * 100
             }
             //print to the console where we are with the download
             //show % and name and ou
@@ -53,26 +53,28 @@ module.exports = function dlCourse(settings, callback) {
         continue: 'button[primary="primary"]',
         includeCourseFiles: 'input[name="exportFiles"]',
         finish: 'button[primary="primary"]',
+        doneButtonSelector: 'button[primary="primary"]',
         clickToDL: 'div .dco_c a'
     }
+    // console.log(settings);
     nightmare
         .downloadManager()
         //go to the log in page
         .goto(settings.loginURL)
-        //.cookies.set(settings.nightmareCookies)
+        .cookies.set(settings.nightmareCookies)
         //fill in the user name and password
-        .insert(settings.userNameSelector, settings.userName)
-        .insert(settings.passwordSelector, settings.password)
+        // .insert(settings.userNameSelector, settings.userName)
+        // .insert(settings.passwordSelector, settings.password)
         //click the log in button
-        .click(settings.doneButtonSelector)
+        // .click(selectors.doneButtonSelector)
         //logins have a lot of redirects so wait till we get to the right page
-        .wait(function (url) {
+        /*.wait(function (url) {
             url = new RegExp(url);
             return url.test(document.location.href);
-        }, 'https://byui.brightspace.com/d2l/home')
+        }, 'https://byui.brightspace.com/d2l/home')*/
         //.waitURL('https://byui.brightspace.com/d2l/home')
         .setWaitTimeout(0, 10, 0)
-        //go to import/export copy components of a specific course.  
+        //go to import/export copy components of a specific course.
         .goto('https://' + settings.domain + '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + settings.ou)
         .setWaitTimeout(0, 10, 0)
         //select all components to export
@@ -88,13 +90,7 @@ module.exports = function dlCourse(settings, callback) {
         .click(selectors.continue)
         //go to zipping proccess page
         .setWaitTimeout(2, 0, 0)
-        .wait(() => {
-            if (document.querySelector('button[disabled="disabled"]')) {
-                return false;
-            } else {
-                return true;
-            }
-        })
+        .wait('button[primary]:not([disabled="disabled"])')
         .click(selectors.finish)
         //be done and click finish
         //.setWaitTimeout(0, 40, 0)
