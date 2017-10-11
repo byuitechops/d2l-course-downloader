@@ -7,6 +7,7 @@ require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
 var path = require('path');
 var chalk = require('chalk');
+var fws = require('fixed-width-string');
 
 //this is where the magic happens
 module.exports = function dlCourse(settings, callback) {
@@ -46,8 +47,8 @@ module.exports = function dlCourse(settings, callback) {
             //print to the console where we are with the download
             //show % and name and ou
             //show what it has but add the others in one line
-            console.log("Downloaded: ", chalk.yellow(getPercent.name), getPercent.ou, chalk.cyan(getPercent.percent + '%'),
-                downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes");
+            console.log("Downloaded: ", fws(chalk.yellow(getPercent.name), 40), fws(getPercent.ou, 6), fws(chalk.cyan(getPercent.percent + '%'), 4),
+                fws(chalk.grey(downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes"), {align: 'right'}));
         }
     });
 

@@ -20,6 +20,7 @@
     "async": "^2.5.0",
     "chalk": "^2.1.0",
     "d3-dsv": "^1.0.7",
+    "fixed-width-string": "^1.0.0",
     "nightmare": "^2.10.0",
     "nightmare-download-manager": "^0.2.4",
     "nightmare-helpers": "git+https://github.com/byuitechops/nightmare-helpers.git",
