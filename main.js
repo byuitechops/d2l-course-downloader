@@ -47,10 +47,9 @@ getPrompt((err, promptData) => {
                             loginURL: settings.loginURL,
                             userName: promptData.userName,
                             password: promptData.password,
-                            devtools: true
+                            devtools: true,
                         };
                     });
-                    console.log('Firing off');
                     /* Download ALL the courses */
                     asyncLib.map(courses, dlCourse, (errorDl, results) => {
                         fs.writeFile('./results.txt', results, err => {

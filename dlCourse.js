@@ -5,6 +5,7 @@
 var Nightmare = require('nightmare');
 require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
+var path = require('path');
 
 //this is where the magic happens
 module.exports = function dlCourse(settings, callback) {
@@ -31,20 +32,22 @@ module.exports = function dlCourse(settings, callback) {
     //set up what happens when we cause a download
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
+            console.log('Starting');
             //set the name and location of the course zip files
-            nightmare.emit('download', settings.filepath, downloadItem);
+            nightmare.emit('download', path.resolve('.'), downloadItem);
         }
         if (state == "updated") {
             var getPercent = {
                 name: settings.name,
                 ou: settings.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
-                percent: downloadItem.receivedBytes / downloadItem.totalBytes * 100
+                percent: Math.ceil(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
             }
             //print to the console where we are with the download
             //show % and name and ou
             //show what it has but add the others in one line
-            console.log("Downloaded: ", getPercent.name, getPercent.ou, getPercent.percent + '%', downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes");
+            console.log("Downloaded: ", getPercent.name, getPercent.ou, getPercent.percent + '%',
+                downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes");
         }
     });
 
@@ -75,7 +78,8 @@ module.exports = function dlCourse(settings, callback) {
         //.waitURL('https://byui.brightspace.com/d2l/home')
         .setWaitTimeout(0, 10, 0)
         //go to import/export copy components of a specific course.
-        .goto('https://' + settings.domain + '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + settings.ou)
+        .goto('https://' + settings.domain +
+            '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + settings.ou)
         .setWaitTimeout(0, 10, 0)
         //select all components to export
         .wait(selectors.checkAll)
@@ -90,8 +94,8 @@ module.exports = function dlCourse(settings, callback) {
         .click(selectors.continue)
         //go to zipping proccess page
         .setWaitTimeout(2, 0, 0)
-        .wait('button[primary]:not([disabled="disabled"])')
-        .click(selectors.finish)
+        .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.5-daylight.6/images/tier1/check.svg"]')
+        .click('button[primary]:not([disabled="disabled"])')
         //be done and click finish
         //.setWaitTimeout(0, 40, 0)
         //go to export_summary

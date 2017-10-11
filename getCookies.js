@@ -16,6 +16,10 @@ module.exports = function getCookies(settings, cb) {
     //make nightmare with our settings
     var nightmare = Nightmare(nightmarePrefs);
 
+    function waitURL(url) {
+        var regex = new RegExp(url);
+        return regex.test(document.location.href);
+    }
 
     nightmare
         //go to the log in page
@@ -26,17 +30,14 @@ module.exports = function getCookies(settings, cb) {
         //click the log in button
         .click(settings.doneButtonSelector)
         //logins have a lot of redirects so wait till we get to the right page
-        .wait(function (url) {
-            url = new RegExp(url);
-            return url.test(document.location.href);
-        }, 'https://byui.brightspace.com/d2l/home')
+        .wait(1500)
+        .wait(waitURL, 'https://byui.brightspace.com/d2l/home')
         //now that we have logged in steal the cookies
         .cookies.get()
         .end()
         .then(function (cookies) {
             //send the cookies back
             console.log("Cookies Retrieved!");
-            console.log(cookies);
             cb(null, cookies);
         })
         //if anything errors it goes here. pass it back to the user
