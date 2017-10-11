@@ -54,7 +54,7 @@ getPrompt((err, promptData) => {
                     /* Download ALL the courses */
                     asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (mapError, results) => {
                         var stringified = results.map(result => JSON.stringify(result));
-                        fs.writeFile('./results.txt', stringified, errorFS => {
+                        fs.writeFile('./results.json', stringified, errorFS => {
                             if (errorFS) {
                                 console.log(chalk.red(errorFS));
                             } else {
