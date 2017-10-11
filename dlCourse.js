@@ -34,7 +34,7 @@ module.exports = function dlCourse(settings, callback) {
         if (state === 'started') {
             console.log('Starting');
             //set the name and location of the course zip files
-            nightmare.emit('download', path.resolve('.'), downloadItem);
+            nightmare.emit('download', `./_exports/${settings.name}.zip`, downloadItem);
         }
         if (state == "updated") {
             var getPercent = {
