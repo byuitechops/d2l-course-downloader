@@ -56,7 +56,8 @@ getPrompt((err, promptData) => {
                         if (errorD1) {
                             console.log(chalk.red(errorD1));
                         } else {
-                            fs.writeFile('./results.txt', results, errorFS => {
+                            var stringified = results.map(result => JSON.stringify(result));
+                            fs.writeFile('./results.txt', stringified, errorFS => {
                                 if (errorFS) {
                                     console.log(chalk.red(errorFS));
                                 } else {
