@@ -113,7 +113,7 @@ module.exports = function dlCourse(settings, callback) {
             });
         })
         .catch(function (error) {
-            console.log(error);
+            console.log(chalk.red(error));
             callback(null, settings.ou);
         });
 }
