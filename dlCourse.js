@@ -118,7 +118,7 @@ module.exports = function dlCourse(settings, callback) {
         })
         .catch(function (error) {
             console.log(chalk.red(error));
-            callback(null, null, {
+            callback(null, {
                 success: false,
                 name: settings.name,
                 ou: settings.ou,

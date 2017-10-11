@@ -53,9 +53,17 @@ getPrompt((err, promptData) => {
                     });
                     /* Download ALL the courses */
                     asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (errorDl, results) => {
-                        fs.writeFile('./results.txt', results, err => {
-                            console.log(results.filter(course => !course.success));
-                        });
+                        if (errorD1) {
+                            console.log(chalk.red(errorD1));
+                        } else {
+                            fs.writeFile('./results.txt', results, errorFS => {
+                                if (errorFS) {
+                                    console.log(chalk.red(errorFS));
+                                } else {
+                                    console.log(results.filter(course => !course.success));
+                                }
+                            });
+                        }
                     });
                 }
             });
