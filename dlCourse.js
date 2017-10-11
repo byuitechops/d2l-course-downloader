@@ -47,8 +47,11 @@ module.exports = function dlCourse(settings, callback) {
             //print to the console where we are with the download
             //show % and name and ou
             //show what it has but add the others in one line
-            console.log("Downloaded: ", fws(chalk.yellow(getPercent.name), 40), fws(getPercent.ou, 6), fws(chalk.cyan(getPercent.percent + '%'), 4),
-                fws(chalk.grey(downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes"), {align: 'right'}));
+            console.log("Downloaded: ", fws(getPercent.ou, 6),
+                fws(chalk.yellow(getPercent.name), 25),
+                fws(chalk.cyan(getPercent.percent + '%'), 4),
+                fws(chalk.grey(downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes"), 25, {align: 'right'})
+            );
         }
     });
 
