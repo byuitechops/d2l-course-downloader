@@ -52,19 +52,15 @@ getPrompt((err, promptData) => {
                         };
                     });
                     /* Download ALL the courses */
-                    asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (errorDl, results) => {
-                        if (errorD1) {
-                            console.log(chalk.red(errorD1));
-                        } else {
-                            var stringified = results.map(result => JSON.stringify(result));
-                            fs.writeFile('./results.txt', stringified, errorFS => {
-                                if (errorFS) {
-                                    console.log(chalk.red(errorFS));
-                                } else {
-                                    console.log(results.filter(course => !course.success));
-                                }
-                            });
-                        }
+                    asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (mapError, results) => {
+                        var stringified = results.map(result => JSON.stringify(result));
+                        fs.writeFile('./results.txt', stringified, errorFS => {
+                            if (errorFS) {
+                                console.log(chalk.red(errorFS));
+                            } else {
+                                console.log(results.filter(course => !course.success));
+                            }
+                        });
                     });
                 }
             });
