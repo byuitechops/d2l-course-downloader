@@ -12,7 +12,7 @@ var fws = require('fixed-width-string');
 //this is where the magic happens
 module.exports = function dlCourse(settings, callback) {
     //could do some varification that we have all that we need in settings
-    console.log("Starting " + settings.name + " Download: " + settings.ou)
+    console.log(chalk.blue("Starting " + chalk.yellowBright(settings.name) + " Download: " + settings.ou))
 
     var nightmare,
         nightmarePrefs = {
@@ -48,9 +48,9 @@ module.exports = function dlCourse(settings, callback) {
             //show % and name and ou
             //show what it has but add the others in one line
             console.log("Downloaded: ", fws(getPercent.ou, 6, {align: 'right'}),
-                fws(chalk.yellow(getPercent.name), 40, {padding: '.'}),
+                fws(chalk.yellow(getPercent.name), 36),
                 fws(chalk.blueBright(getPercent.percent + '%'), 4),
-                fws(chalk.grey(downloadItem.receivedBytes + " / " + downloadItem.totalBytes + " Bytes"), 40, {align: 'left'})
+                fws(chalk.grey("Bytes: " + downloadItem.receivedBytes + " / " + downloadItem.totalBytes), 40, {align: 'left'})
             );
         }
     });
