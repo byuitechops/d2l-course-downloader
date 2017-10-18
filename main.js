@@ -42,8 +42,7 @@ getPrompt((err, promptData) => {
                         return {
                             domain: domain,
                             ou: course.OU,
-                            name: course.Name,
-                            fileOutPath: path.join('.', course.Name),
+                            name: '',
                             nightmareCookies: cookies,
                             loginURL: settings.loginURL,
                             userName: promptData.userName,
@@ -59,10 +58,10 @@ getPrompt((err, promptData) => {
                                 console.log(chalk.red(errorFS));
                             } else {
                                 var failList = results.filter(course => !course.success);
-                                if (failList.length > 0) {
+                                if (failList.length === 0) {
                                     console.log(chalk.green(`All ${chalk.yellow(results.length)} courses successfully downloaded.`));
                                 } else {
-                                    console.log(chalk.brightRed(`These ${chalk.red(failList.length)} courses failed to download:`));
+                                    console.log(chalk.redBright(`These ${chalk.red(failList.length)} courses failed to download:`));
                                     console.log(failList);
                                 }
                             }
