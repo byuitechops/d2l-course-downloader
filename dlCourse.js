@@ -81,7 +81,7 @@ module.exports = (settings, callback) => {
         if (state === 'started') {
             //console.log('NAME', settings.name)
             //set the name and location of the course zip files
-            nightmare.emit('download', `./_exports/${settings.name}.zip`, downloadItem);
+            nightmare.emit('download', `../../D2LOriginal/${settings.name}.zip`, downloadItem);
         }
         if (state == "updated") {
             var getPercent = {
@@ -119,17 +119,6 @@ module.exports = (settings, callback) => {
         //go to the log in page
         .goto(settings.loginURL)
         .cookies.set(settings.nightmareCookies)
-        //fill in the user name and password
-        // .insert(settings.userNameSelector, settings.userName)
-        // .insert(settings.passwordSelector, settings.password)
-        //click the log in button
-        // .click(selectors.doneButtonSelector)
-        //logins have a lot of redirects so wait till we get to the right page
-        /*.wait(function (url) {
-            url = new RegExp(url);
-            return url.test(document.location.href);
-        }, 'https://byui.brightspace.com/d2l/home')*/
-        //.waitURL('https://byui.brightspace.com/d2l/home')
         .setWaitTimeout(0, 10, 0)
         //go to import/export copy components of a specific course.
         .goto('https://' + settings.domain +
@@ -145,10 +134,3 @@ module.exports = (settings, callback) => {
             continueDownload(nightmare);
         });
 }
-//do we need these anymore? This was included multiple times but i don't think its necessary. THe program has run just fine without it.
-/*.wait(function () {
-    return document.location.origin + document.location.pathname === "https://byui.brightspace.com/d2l/lms/importExport/export/export_summary.d2l";
-})*/
-/*.wait(function () {
-    return document.getElementsByTagName("h1")[0].innerHTML.match(/(Select Course Material)/g);
-})*/
