@@ -40,6 +40,7 @@ module.exports = (settings, callback) => {
                 callback(null, {
                     success: true,
                     name: settings.name,
+                    filePath: settings.filePath,
                     ou: settings.ou,
                     err: {}
                 });
@@ -49,6 +50,7 @@ module.exports = (settings, callback) => {
                 callback(null, {
                     success: false,
                     name: settings.name,
+                    filePath: settings.filePath,
                     ou: settings.ou,
                     err: chalk.red(error)
                 });
@@ -79,9 +81,9 @@ module.exports = (settings, callback) => {
     //set up what happens when we cause a download
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
-            //console.log('NAME', settings.name)
             //set the name and location of the course zip files
-            nightmare.emit('download', `../../D2LOriginal/${settings.name}.zip`, downloadItem);
+            settings.filePath = path.resolve('.', `_exports/${settings.name}.zip`);
+            nightmare.emit('download', settings.filePath, downloadItem);
         }
         if (state == "updated") {
             var getPercent = {

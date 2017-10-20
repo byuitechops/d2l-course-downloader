@@ -7,9 +7,10 @@ var d3 = require('d3-dsv');
 var asyncLib = require('async');
 var getCookies = require('./getCookies.js');
 var dlCourse = require('./dlCourse.js');
+var path = require('path');
 var chalk = require('chalk');
 
-module.exports = (promptData) => {
+module.exports = (promptData, finalCb) => {
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
 
@@ -80,6 +81,8 @@ module.exports = (promptData) => {
                                 console.log(failList);
                             }
                         }
+                        /* Call this here? And pass back location of exports folder..*/
+                        finalCb(results);
                     });
                 });
             }
