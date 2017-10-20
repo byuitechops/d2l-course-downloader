@@ -81,7 +81,7 @@ module.exports = function dlCourse(settings, callback) {
         if (state === 'started') {
             //console.log('NAME', settings.name)
             //set the name and location of the course zip files
-            nightmare.emit('download', `./D2LOriginal/${settings.name}.zip`, downloadItem);
+            nightmare.emit('download', `./_exports/${settings.name}.zip`, downloadItem);
         }
         if (state == "updated") {
             var getPercent = {

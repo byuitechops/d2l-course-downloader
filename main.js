@@ -1,3 +1,6 @@
+/*eslint-env node, es6*/
+/*eslint no-console: 0*/
+
 var fs = require('fs');
 var path = require('path');
 var d3 = require('d3-dsv');
