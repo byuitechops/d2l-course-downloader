@@ -10,7 +10,10 @@ var getCookies = require('./getCookies.js');
 var dlCourse = require('./dlCourse.js');
 var chalk = require('chalk');
 
-getPrompt((err, promptData) => {
+module.exports = (promptData) => {
+
+    exports.potato = () => console.log('potato');
+
     var domain = promptData === 'yes' ? 'pathway' : 'byui';
 
     /* Read in the CSV */
@@ -54,17 +57,24 @@ getPrompt((err, promptData) => {
                         };
                     });
                     /* Download ALL the courses */
-                    asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (mapError, results) => {
-                        var stringified = results.map(result => JSON.stringify(result));
+                    asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (
+                        mapError, results) => {
+                        var stringified = results.map(result => JSON.stringify(
+                            result));
                         fs.writeFile('./results.json', stringified, errorFS => {
                             if (errorFS) {
                                 console.log(chalk.red(errorFS));
                             } else {
-                                var failList = results.filter(course => !course.success);
+                                var failList = results.filter(course =>
+                                    !course.success);
                                 if (failList.length === 0) {
-                                    console.log(chalk.green(`All ${chalk.yellow(results.length)} courses successfully downloaded.`));
+                                    console.log(chalk.green(
+                                        `All ${chalk.yellow(results.length)} courses successfully downloaded.`
+                                    ));
                                 } else {
-                                    console.log(chalk.redBright(`These ${chalk.red(failList.length)} courses failed to download:`));
+                                    console.log(chalk.redBright(
+                                        `These ${chalk.red(failList.length)} courses failed to download:`
+                                    ));
                                     console.log(failList);
                                 }
                             }
@@ -74,4 +84,4 @@ getPrompt((err, promptData) => {
             });
         }
     });
-});
+}
