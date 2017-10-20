@@ -1,5 +1,6 @@
 var prompt = require('prompt');
 var chalk = require('chalk');
+var main = require('./main.js');
 
 var promptSettings = [{
     name: 'userName',
@@ -45,19 +46,12 @@ var promptSettings = [{
   },
 ];
 
-module.exports = (callback) => {
-
-  function promptCB(err, promptData) {
+prompt.get(promptSettings, (err, promptData) => {
     if (err) {
-      callback(err, null);
-      return;
+        console.log(err);
+        return;
     }
-
-    callback(null, promptData);
-  }
-
-  prompt.get(promptSettings, promptCB);
-
-  prompt.start();
-
-};
+    console.log(promptData);
+    // prompt.start();
+    main(promptData);
+});
