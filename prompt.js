@@ -37,14 +37,16 @@ var promptSettings = [{
     type: 'string',
     description: 'Is this for pathway? (yes/no)',
     before: (value) => {
-      if (value.toLowerCase() != 'yes') {
+      if (value.toLowerCase() != 'yes' || value.toLowerCase() != 'y') {
         return 'no';
       } else {
-        return value;
+        return 'yes';
       }
     }
   },
 ];
+
+// prompt.start();
 
 prompt.get(promptSettings, (err, promptData) => {
     if (err) {
@@ -52,6 +54,5 @@ prompt.get(promptSettings, (err, promptData) => {
         return;
     }
     console.log(promptData);
-    // prompt.start();
     main(promptData);
 });

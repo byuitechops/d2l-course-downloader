@@ -2,16 +2,13 @@ var fs = require('fs');
 var path = require('path');
 var d3 = require('d3-dsv');
 var asyncLib = require('async');
-var getPrompt = require('./prompt.js');
 var getCookies = require('./getCookies.js');
 var dlCourse = require('./dlCourse.js');
 var chalk = require('chalk');
 
 module.exports = (promptData) => {
 
-    exports.potato = () => console.log('potato');
-
-    var domain = promptData === 'yes' ? 'pathway' : 'byui';
+    var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
 
     /* Read in the CSV */
     fs.readFile(path.join('.', promptData.csvName), 'utf8', (err, data) => {
