@@ -10,7 +10,6 @@ var dlCourse = require('./dlCourse.js');
 var chalk = require('chalk');
 
 module.exports = (promptData) => {
-    console.log(promptData);
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
 
@@ -44,6 +43,7 @@ module.exports = (promptData) => {
         getCookies(settings, (errorCookies, cookies) => {
             if (errorCookies) {
                 console.log(chalk.red(errorCookies));
+                return;
             } else {
                 /* Set parameters for download */
                 var courses = courseList.map(course => {

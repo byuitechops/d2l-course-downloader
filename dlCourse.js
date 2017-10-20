@@ -10,7 +10,7 @@ var chalk = require('chalk');
 var fws = require('fixed-width-string');
 
 //this is where the magic happens
-module.exports = function dlCourse(settings, callback) {
+module.exports = (settings, callback) => {
     /* Continues the nightmare session after scraping the course name*/
     function continueDownload(nightmare2) {
         nightmare2

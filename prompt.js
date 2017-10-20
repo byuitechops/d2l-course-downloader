@@ -55,7 +55,6 @@ prompt.get(promptSettings, (err, promptData) => {
         console.log(err);
         return;
     }
-    console.log(promptData);
 
     if (promptData.source.includes('.csv')) {
         prompt.get(downloadMax, (err, downloadMaxValue) => {
@@ -63,10 +62,11 @@ prompt.get(promptSettings, (err, promptData) => {
                 console.error(err);
                 return;
             }
-            promptData.maxConcurrent = downloadMaxValue;
+            promptData.maxConcurrent = downloadMaxValue.maxConcurrent;
+            main(promptData);
         });
     } else {
         promptData.maxConcurrent = '1';
+        main(promptData);
     }
-    main(promptData);
 });
