@@ -82,7 +82,7 @@ module.exports = (settings, callback) => {
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
             //set the name and location of the course zip files
-            settings.filePath = path.resolve('.', `../../D2LOriginal/${settings.name}.zip`);
+            settings.filePath = path.resolve('.', `./D2LOriginal/${settings.name}.zip`);
             nightmare.emit('download', settings.filePath, downloadItem);
         }
         if (state == "updated") {
