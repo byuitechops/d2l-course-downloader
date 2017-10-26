@@ -53,8 +53,8 @@ module.exports = (finalCb) => {
         message: 'Must be a number.'
 }];
 
-    prompt.message = chalk.whiteBright(null);
-    prompt.delimiter = chalk.whiteBright(null);
+    prompt.message = chalk.whiteBright('');
+    prompt.delimiter = chalk.whiteBright('');
 
     prompt.get(promptSettings, (err, promptData) => {
         if (err) {
