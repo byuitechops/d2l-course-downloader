@@ -25,7 +25,7 @@ module.exports = (settings, callback) => {
             //go to confirm page
             .click(selectors.continue)
             //go to zipping proccess page
-            .setWaitTimeout(10, 0, 0)
+            .setWaitTimeout(30, 0, 0)
             .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.6-daylight.8/images/tier1/check.svg"]')
             .click('button[primary]:not([disabled="disabled"])')
             //be done and click finish
@@ -121,11 +121,11 @@ module.exports = (settings, callback) => {
         //go to the log in page
         .goto(settings.loginURL)
         .cookies.set(settings.nightmareCookies)
-        .setWaitTimeout(0, 10, 0)
+        .setWaitTimeout(0, 30, 0)
         //go to import/export copy components of a specific course.
         .goto('https://' + settings.domain +
             '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + settings.ou)
-        .setWaitTimeout(0, 10, 0)
+        .setWaitTimeout(0, 30, 0)
         .wait(selectors.checkAll)
         .evaluate((settings) => {
             /* get the course name */
