@@ -26,7 +26,7 @@ module.exports = (settings, callback) => {
             .click(selectors.continue)
             //go to zipping proccess page
             .setWaitTimeout(10, 0, 0)
-            .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.5-daylight.6/images/tier1/check.svg"]')
+            .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.6-daylight.8/images/tier1/check.svg"]')
             .click('button[primary]:not([disabled="disabled"])')
             //be done and click finish
             //.setWaitTimeout(0, 40, 0)
