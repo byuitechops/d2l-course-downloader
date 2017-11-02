@@ -22,7 +22,7 @@ module.exports = {
             });
         })
     },
-    multiDownload: function () {
+    multiDownload: function (callback) {
         multiPrompt((err, promptData) => {
             console.log(promptData);
             main(promptData, results => {
@@ -30,7 +30,7 @@ module.exports = {
             });
         })
     },
-    gauntletDownload: function () {
+    gauntletDownload: function (callback) {
         gauntletPrompt((err, promptData) => {
             main(promptData, results => {
                 callback(results);
