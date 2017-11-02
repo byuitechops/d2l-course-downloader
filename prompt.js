@@ -5,111 +5,30 @@ var prompt = require('prompt');
 var main = require('./main.js');
 var chalk = require('chalk');
 
-module.exports = (finalCb) => {
+const downloader = require('./')
+const gauntletPrompt = require('./gauntletPrompt.js');
+const singlePrompt = require('./singlePrompt.js');
+const multiPrompt = require('./multiPrompt.js');
 
-    var promptSettings = [{
-            name: 'userName',
-            type: 'string',
-            description: chalk.cyanBright('Enter your username:'),
-            required: true,
-            message: 'Username cannot be empty.'
-        },
-        {
-            name: 'password',
-            description: chalk.cyanBright('Enter your password:'),
-            type: 'string',
-            required: true,
-            hidden: true,
-            replace: '*',
-            message: 'Password cannot be empty.'
-        },
-        {
-            name: 'source',
-            type: 'string',
-            description: chalk.cyanBright('Enter the D2L OU or the name of the CSV:'),
-            default: 'gauntlets.csv',
-            required: true,
-            pattern: /(\d+)|(\S+.csv$)/
-        },
-        {
-            name: 'subdomain',
-            type: 'string',
-            description: chalk.cyanBright('Is this for pathway? (yes/no)'),
-            before: (value) => {
-                if (value.toLowerCase() != 'yes' || value.toLowerCase() != 'y') {
-                    return 'no';
-                } else {
-                    return 'yes';
-                }
-            }
-        },
-    ];
-
-    var downloadMax = [{
-        name: 'maxConcurrent',
-        type: 'number',
-        description: chalk.cyanBright('Enter the max number of concurrent downloads allowed:'),
-        required: true,
-        default: '15',
-        message: 'Must be a number.'
-    }];
-
-    prompt.message = chalk.whiteBright('');
-    prompt.delimiter = chalk.whiteBright('');
-
-    prompt.get(promptSettings, (err, promptData) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-
-        if (promptData.source.includes('.csv')) {
-            prompt.get(downloadMax, (err, downloadMaxValue) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                promptData.maxConcurrent = downloadMaxValue.maxConcurrent;
-                main(promptData, finalCb);
-            });
-        } else {
-            promptData.maxConcurrent = '1';
-            main(promptData, finalCb);
-        }
-    });
+const finalCallback = function (results) {
+    // console.log(results);
 }
 
-
-exports.gauntlets = () => {
-
-    var promptSettings = [{
-            name: 'userName',
-            type: 'string',
-            description: chalk.cyanBright('Enter your username:'),
-            required: true,
-            message: 'Username cannot be empty.'
-        },
-        {
-            name: 'password',
-            description: chalk.cyanBright('Enter your password:'),
-            type: 'string',
-            required: true,
-            hidden: true,
-            replace: '*',
-            message: 'Password cannot be empty.'
-        }
-    ];
-
-    prompt.message = chalk.whiteBright('');
-    prompt.delimiter = chalk.whiteBright('');
-
-    prompt.get(promptSettings, (err, promptData) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        promptData.source = 'gauntlets.csv';
-        promptData.maxConcurrent = '10';
-        main(promptData, finalCb);
-    });
-};
+module.exports = {
+    singleDownload: function () {
+        singlePrompt((err, promptData) => {
+            main(promptData, finalCallback);
+        })
+    },
+    multiDownload: function () {
+        multiPrompt((err, promptData) => {
+            console.log(promptData);
+            main(promptData, finalCallback);
+        })
+    },
+    gauntletDownload: function () {
+        gauntletPrompt((err, promptData) => {
+            main(promptData, finalCallback);
+        })
+    },
+}
