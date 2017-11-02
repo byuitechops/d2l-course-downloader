@@ -13,7 +13,7 @@ module.exports = (finalCb) => {
             description: chalk.cyanBright('Enter your username:'),
             required: true,
             message: 'Username cannot be empty.'
-  },
+        },
         {
             name: 'password',
             description: chalk.cyanBright('Enter your password:'),
@@ -22,14 +22,15 @@ module.exports = (finalCb) => {
             hidden: true,
             replace: '*',
             message: 'Password cannot be empty.'
-  },
+        },
         {
             name: 'source',
             type: 'string',
             description: chalk.cyanBright('Enter the D2L OU or the name of the CSV:'),
+            default: 'gauntlets.csv',
             required: true,
             pattern: /(\d+)|(\S+.csv$)/
-  },
+        },
         {
             name: 'subdomain',
             type: 'string',
@@ -41,8 +42,8 @@ module.exports = (finalCb) => {
                     return 'yes';
                 }
             }
-  },
-];
+        },
+    ];
 
     var downloadMax = [{
         name: 'maxConcurrent',
@@ -51,7 +52,7 @@ module.exports = (finalCb) => {
         required: true,
         default: '15',
         message: 'Must be a number.'
-}];
+    }];
 
     prompt.message = chalk.whiteBright('');
     prompt.delimiter = chalk.whiteBright('');
@@ -77,3 +78,38 @@ module.exports = (finalCb) => {
         }
     });
 }
+
+
+exports.gauntlets = () => {
+
+    var promptSettings = [{
+            name: 'userName',
+            type: 'string',
+            description: chalk.cyanBright('Enter your username:'),
+            required: true,
+            message: 'Username cannot be empty.'
+        },
+        {
+            name: 'password',
+            description: chalk.cyanBright('Enter your password:'),
+            type: 'string',
+            required: true,
+            hidden: true,
+            replace: '*',
+            message: 'Password cannot be empty.'
+        }
+    ];
+
+    prompt.message = chalk.whiteBright('');
+    prompt.delimiter = chalk.whiteBright('');
+
+    prompt.get(promptSettings, (err, promptData) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        promptData.source = 'gauntlets.csv';
+        promptData.maxConcurrent = '10';
+        main(promptData, finalCb);
+    });
+};
