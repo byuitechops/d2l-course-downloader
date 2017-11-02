@@ -24,7 +24,6 @@ module.exports = {
     },
     multiDownload: function (callback) {
         multiPrompt((err, promptData) => {
-            console.log(promptData);
             main(promptData, results => {
                 callback(results);
             });
