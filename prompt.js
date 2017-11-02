@@ -15,20 +15,26 @@ const finalCallback = function (results) {
 }
 
 module.exports = {
-    singleDownload: function () {
+    singleDownload: function (callback) {
         singlePrompt((err, promptData) => {
-            main(promptData, finalCallback);
+            main(promptData, results => {
+                callback(results);
+            });
         })
     },
     multiDownload: function () {
         multiPrompt((err, promptData) => {
             console.log(promptData);
-            main(promptData, finalCallback);
+            main(promptData, results => {
+                callback(results);
+            });
         })
     },
     gauntletDownload: function () {
         gauntletPrompt((err, promptData) => {
-            main(promptData, finalCallback);
+            main(promptData, results => {
+                callback(results);
+            });
         })
     },
 }
