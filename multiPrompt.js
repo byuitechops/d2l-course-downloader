@@ -27,7 +27,6 @@ var promptSettings = [{
         name: 'source',
         type: 'string',
         description: chalk.cyanBright('Enter the D2L OU or the name of the CSV:'),
-        default: 'gauntlets.csv',
         required: true,
         pattern: /(\d+)|(\S+.csv$)/
     },
@@ -76,5 +75,5 @@ module.exports = (callback) => {
             callback(null, promptData);
         }
     });
-    
+
 }
