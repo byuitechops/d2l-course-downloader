@@ -21,6 +21,7 @@
     "chalk": "^2.3.0",
     "d3-dsv": "^1.0.7",
     "fixed-width-string": "^1.0.0",
+    "fs": "0.0.1-security",
     "nightmare": "^2.10.0",
     "nightmare-download-manager": "^0.2.4",
     "nightmare-helpers": "git+https://github.com/byuitechops/nightmare-helpers.git",

@@ -33,7 +33,7 @@ module.exports = (callback) => {
             return;
         }
         promptData.subdomain = 'no';
-        promptData.source = './CLI/gauntlets.csv';
+        promptData.source = './node_modules/child-development-kit/gauntlets.csv';
         promptData.maxConcurrent = '10';
         callback(null, promptData);
     });

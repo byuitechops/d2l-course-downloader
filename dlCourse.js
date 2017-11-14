@@ -6,6 +6,7 @@ var Nightmare = require('nightmare');
 require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
 var path = require('path');
+var fs = require('fs');
 var chalk = require('chalk');
 var fws = require('fixed-width-string');
 
@@ -82,7 +83,11 @@ module.exports = (settings, callback) => {
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
             //set the name and location of the course zip files
-            settings.filePath = path.resolve('.', `./D2LOriginal/${settings.name}.zip`);
+            if (fs.existsSync('./node_modules/child-development-kit/D2LOriginal') {
+                settings.filePath = path.resolve('.', `./node_modules/child-development-kit/D2LOriginal/${settings.name}.zip`);
+            } else {
+                settings.filePath = path.resolve('.', `./D2LOriginal/${settings.name}.zip`);
+            }
             nightmare.emit('download', settings.filePath, downloadItem);
         }
         if (state == "updated") {
