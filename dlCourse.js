@@ -83,7 +83,7 @@ module.exports = (settings, callback) => {
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
             //set the name and location of the course zip files
-            if (fs.existsSync('./node_modules/child-development-kit/D2LOriginal') {
+            if (fs.existsSync('./node_modules/child-development-kit/D2LOriginal')) {
                 console.log('found');
                 settings.filePath = path.resolve('.', `./node_modules/child-development-kit/D2LOriginal/${settings.name}.zip`);
             } else {
