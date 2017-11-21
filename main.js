@@ -11,7 +11,6 @@ var path = require('path');
 var chalk = require('chalk');
 
 module.exports = (promptData, finalCb) => {
-    console.log(promptData);
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
 
