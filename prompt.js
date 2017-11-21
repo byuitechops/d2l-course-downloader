@@ -36,4 +36,9 @@ module.exports = {
             });
         })
     },
+    uiDownload: function (promptData, callback) {
+        main(promptData, results => {
+            callback(results);
+        });
+    },
 }
