@@ -13,6 +13,7 @@ var chalk = require('chalk');
 module.exports = (promptData, finalCb) => {
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
+    console.log('Domain set to: ' + domain);
 
     /* Determine settings */
     var settings = {
