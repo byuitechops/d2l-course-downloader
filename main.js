@@ -90,6 +90,8 @@ module.exports = (promptData, finalCb) => {
     }
 
     if (promptData.source.includes('.csv')) {
+        console.log('CSV');
+        console.log(promptData.source);
         getCSVData((d3Error, csvData) => {
             if (d3Error) {
                 console.error(d3Error);
@@ -100,6 +102,7 @@ module.exports = (promptData, finalCb) => {
         });
     } else {
         console.log('NO CSV');
+        console.log(promptData.source);
         downloadCourses([{
             OU: promptData.source
         }]);
