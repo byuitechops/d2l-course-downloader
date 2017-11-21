@@ -14,6 +14,7 @@ module.exports = (promptData, finalCb) => {
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
     console.log('Domain set to: ' + domain);
+    console.log(promptData);
 
     /* Determine settings */
     var settings = {
@@ -25,6 +26,8 @@ module.exports = (promptData, finalCb) => {
         loginURL: `https://${domain}.brightspace.com/d2l/login?noredirect=1`,
         afterLoginURL: `https://${domain}.brightspace.com/d2l/home`
     };
+
+    console.log(settings);
 
     function getCSVData(callback) {
         /* Read in the CSV */
