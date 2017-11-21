@@ -99,6 +99,7 @@ module.exports = (promptData, finalCb) => {
             }
         });
     } else {
+        console.log('NO CSV');
         downloadCourses([{
             OU: promptData.source
         }]);
