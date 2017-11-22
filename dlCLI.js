@@ -1,6 +1,6 @@
 const prompt = require('prompt');
 const chalk = require('chalk');
-const main = require('./main');
+const downloader = require('./main');
 const getCookies = require('./getCookies.js');
 const asyncLib = require('async');
 
