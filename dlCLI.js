@@ -25,37 +25,40 @@ var promptSettings = [{
 ];
 
 module.exports = (orders, callback) => {
-        prompt.get(promptSettings, (err, promptData) => {
-            if (err) {
-                callback(err, promptData);
-                return;
-            }
-            promptData.maxConcurrent = '10';
+    prompt.get(promptSettings, (err, promptData) => {
+        if (err) {
+            callback(err, promptData);
+            return;
+        }
+        promptData.maxConcurrent = '10';
 
+
+
+        asyncLib.each(orders, (order, eachCb) => {
+            // Combine all the pieces
+            var data = Object.assign(order, promptData);
+            data.userNameSelector = '#userName';
+            data.passwordSelector = '#password';
+            data.doneButtonSelector = '[primary="primary"]';
+            data.loginURL =
+                `https://${data.platform}.brightspace.com/d2l/login?noredirect=1`;
+            data.afterLoginURL =
+                `https://${data.platform}.brightspace.com/d2l/home`;
+
+            // Get them cookies
             getCookies(settings, (errorCookies, cookies) => {
-                if (errorCookies) {
-                    console.log(chalk.red(errorCookies));
-                    return;
-                } else {
-
-                    asyncLib.each(orders, (order, eachCb) => {
-                        // Combine all the pieces
-                        var data = Object.assign(order, promptData);
+                    if (errorCookies) {
+                        console.log(chalk.red(errorCookies));
+                        return;
+                    } else {
                         data.cookies = cookies;
-
-                        // Do the download thingy
+                        // download the course
+                        console.log(data);
                         downloader(data, () => {
-
                             eachCb(null);
                         });
-                    }, err2 => {
-                        if (err2) console.error(err2);
-                        else {
-                            console.log('Complete!');
-                            callback(orders);
-                        }
-                    });
-                }
+                    }
             });
         });
+    });
 }
