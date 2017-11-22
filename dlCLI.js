@@ -32,20 +32,23 @@ module.exports = (orders, callback) => {
             return;
         }
 
+        var settings = {
+            userNameSelector: '#userName',
+            passwordSelector: '#password',
+            doneButtonSelector: '[primary="primary"]',
+            loginURL: `https://byui.brightspace.com/d2l/login?noredirect=1`,
+            afterLoginURL: `https://byui.brightspace.com/d2l/home`,
+        }
+
         // Set the maxConcurrent downloads
         promptData.maxConcurrent = '10';
 
         asyncLib.each(orders, (order, eachCb) => {
             // Combine all the pieces
             var data = Object.assign(order, promptData);
-            data.userNameSelector = '#userName';
-            data.passwordSelector = '#password';
-            data.doneButtonSelector = '[primary="primary"]';
-            data.loginURL = `https://${data.platform}.brightspace.com/d2l/login?noredirect=1`;
-            data.afterLoginURL = `https://${data.platform}.brightspace.com/d2l/home`;
 
             // Get them cookies
-            getCookies(data, (errorCookies, cookies) => {
+            getCookies(settings, (errorCookies, cookies) => {
                     if (errorCookies) {
                         console.log('ERROR');
                         console.log(chalk.red(errorCookies));

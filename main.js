@@ -25,13 +25,6 @@ module.exports = (data, finalCb) => {
 
     console.log(settings);
 
-    if (data.platform === 'Campus' ||
-        data.platform === 'Online') {
-        data.platform = 'byui';
-    } else {
-        data.platform = 'pathway';
-    }
-
     var setup = {
         domain: data.platform,
         ou: data.courseOU,
