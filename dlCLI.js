@@ -47,6 +47,7 @@ module.exports = (orders, callback) => {
             // Get them cookies
             getCookies(data, (errorCookies, cookies) => {
                     if (errorCookies) {
+                        console.log('ERROR');
                         console.log(chalk.red(errorCookies));
                         return;
                     } else {
