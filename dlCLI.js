@@ -31,7 +31,10 @@ module.exports = (orders, callback) => {
         }
         promptData.maxConcurrent = '10';
 
-        console.log(orders);
+        orders.forEach(order => {
+            console.log(Object.assign(order, promptData));
+        });
+
 
         // callback(null, promptData);
     });
