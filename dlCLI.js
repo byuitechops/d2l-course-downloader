@@ -31,6 +31,7 @@ module.exports = (orders, callback) => {
             callback(err, promptData);
             return;
         }
+        promptData.maxConcurrent = '10'; // Do we need this still?
 
         var settings = {
             userNameSelector: '#userName',
@@ -40,28 +41,28 @@ module.exports = (orders, callback) => {
             afterLoginURL: `https://byui.brightspace.com/d2l/home`,
         }
 
-        // Set the maxConcurrent downloads
-        promptData.maxConcurrent = '10';
+        getCookies(settings, (errorCookies, cookies) => {
+            if (errorCookies) {
+                console.log('ERROR');
+                console.log(chalk.red(errorCookies));
+                return;
+            } else {
+                // Set the maxConcurrent downloads
+                var userCookies = {
+                    cookies: cookies
+                };
 
-        asyncLib.each(orders, (order, eachCb) => {
-            // Combine all the pieces
-            var data = Object.assign(order, promptData);
+                asyncLib.each(orders, (order, eachCb) => {
+                    // Combine all the pieces
+                    data = Object.assign(userCookies, order, promptData);
+                    console.log(data);
+                    downloader(data, () => {
+                        eachCb(null);
+                    });
+                });
+            }
 
-            // Get them cookies
-            getCookies(settings, (errorCookies, cookies) => {
-                    if (errorCookies) {
-                        console.log('ERROR');
-                        console.log(chalk.red(errorCookies));
-                        return;
-                    } else {
-                        data.cookies = cookies;
-                        // download the course
-                        console.log(data);
-                        downloader(data, () => {
-                            eachCb(null);
-                        });
-                    }
-            });
+
         });
     });
 }
