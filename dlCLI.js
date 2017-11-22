@@ -39,6 +39,8 @@ module.exports = (orders, callback) => {
             doneButtonSelector: '[primary="primary"]',
             loginURL: `https://byui.brightspace.com/d2l/login?noredirect=1`,
             afterLoginURL: `https://byui.brightspace.com/d2l/home`,
+            userName: promptData.userName,
+            password: promptData.password,
         }
 
         getCookies(settings, (errorCookies, cookies) => {
