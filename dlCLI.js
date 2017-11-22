@@ -45,7 +45,7 @@ module.exports = (orders, callback) => {
             data.afterLoginURL = `https://${data.platform}.brightspace.com/d2l/home`;
 
             // Get them cookies
-            getCookies(settings, (errorCookies, cookies) => {
+            getCookies(data, (errorCookies, cookies) => {
                     if (errorCookies) {
                         console.log(chalk.red(errorCookies));
                         return;
