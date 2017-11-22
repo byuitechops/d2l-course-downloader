@@ -140,5 +140,7 @@ module.exports = (settings, callback) => {
         .then((name) => {
             settings.name = name;
             continueDownload(nightmare);
+        }).catch((e) => {
+            console.log(e);
         });
 }
