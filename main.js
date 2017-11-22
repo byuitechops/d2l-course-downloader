@@ -10,7 +10,7 @@ var dlCourse = require('./dlCourse.js');
 var path = require('path');
 var chalk = require('chalk');
 
-module.exports = (promptData, finalCb) => {
+module.exports = (finalCb) => {
 
     var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
     console.log('Domain set to: ' + domain);
