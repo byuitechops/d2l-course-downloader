@@ -29,8 +29,6 @@ module.exports = (data, finalCb) => {
         afterLoginURL: `https://${domain}.brightspace.com/d2l/home`
     };
 
-    console.log(settings);
-
     var setup = {
         domain: data.platform,
         ou: data.courseOU,
@@ -43,7 +41,7 @@ module.exports = (data, finalCb) => {
     };
 
     // function downloadCourse() {
-        dlCourse(settings, (err, courseObj) => {
+        dlCourse(setup, (err, courseObj) => {
             if (err) console.error(err);
             else {
                 console.log(courseObj);
