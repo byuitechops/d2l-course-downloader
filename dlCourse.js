@@ -84,7 +84,6 @@ module.exports = (settings, callback) => {
         if (state === 'started') {
             //set the name and location of the course zip files
             if (fs.existsSync('./node_modules/child-development-kit/D2LOriginal')) {
-                console.log('found');
                 settings.filePath = path.resolve('.', `./node_modules/child-development-kit/D2LOriginal/${settings.name}.zip`);
             } else {
                 settings.filePath = path.resolve('.', `./D2LOriginal/${settings.name}.zip`);
