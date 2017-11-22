@@ -2,6 +2,7 @@ const prompt = require('prompt');
 const chalk = require('chalk');
 const main = require('./main');
 const getCookies = require('./getCookies.js');
+const asyncLib = require('async');
 
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
@@ -30,9 +31,9 @@ module.exports = (orders, callback) => {
             callback(err, promptData);
             return;
         }
+
+        // Set the maxConcurrent downloads
         promptData.maxConcurrent = '10';
-
-
 
         asyncLib.each(orders, (order, eachCb) => {
             // Combine all the pieces
@@ -40,10 +41,8 @@ module.exports = (orders, callback) => {
             data.userNameSelector = '#userName';
             data.passwordSelector = '#password';
             data.doneButtonSelector = '[primary="primary"]';
-            data.loginURL =
-                `https://${data.platform}.brightspace.com/d2l/login?noredirect=1`;
-            data.afterLoginURL =
-                `https://${data.platform}.brightspace.com/d2l/home`;
+            data.loginURL = `https://${data.platform}.brightspace.com/d2l/login?noredirect=1`;
+            data.afterLoginURL = `https://${data.platform}.brightspace.com/d2l/home`;
 
             // Get them cookies
             getCookies(settings, (errorCookies, cookies) => {
