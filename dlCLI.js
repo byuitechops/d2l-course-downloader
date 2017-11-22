@@ -55,7 +55,7 @@ module.exports = (orders, callback) => {
 
                 asyncLib.each(orders, (order, eachCb) => {
                     // Combine all the pieces
-                    data = Object.assign(userCookies, order, promptData);
+                    data = Object.assign(userCookies, order, promptData, settings);
                     console.log(data);
                     downloader(data, () => {
                         eachCb(null);

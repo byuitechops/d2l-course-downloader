@@ -24,6 +24,7 @@ module.exports = (data, finalCb) => {
         loginURL: `https://${domain}.brightspace.com/d2l/login?noredirect=1`,
         afterLoginURL: `https://${domain}.brightspace.com/d2l/home`
     };
+    console.log(settings);
 
     var setup = {
         domain: data.platform,
@@ -35,6 +36,7 @@ module.exports = (data, finalCb) => {
         password: data.password,
         devtools: true,
     };
+    console.log(setup);
 
     // function downloadCourse() {
         dlCourse(setup, (err, courseObj) => {
