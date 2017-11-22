@@ -1,6 +1,7 @@
 const prompt = require('prompt');
 const chalk = require('chalk');
 const main = require('./main');
+const getCookies = require('./getCookies.js');
 
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
@@ -24,19 +25,37 @@ var promptSettings = [{
 ];
 
 module.exports = (orders, callback) => {
-    prompt.get(promptSettings, (err, promptData) => {
-        if (err) {
-            callback(err, promptData);
-            return;
-        }
-        promptData.maxConcurrent = '10';
+        prompt.get(promptSettings, (err, promptData) => {
+            if (err) {
+                callback(err, promptData);
+                return;
+            }
+            promptData.maxConcurrent = '10';
 
-        orders.forEach(order => {
-            console.log(Object.assign(order, promptData));
+            getCookies(settings, (errorCookies, cookies) => {
+                if (errorCookies) {
+                    console.log(chalk.red(errorCookies));
+                    return;
+                } else {
+
+                    asyncLib.each(orders, (order, eachCb) => {
+                        // Combine all the pieces
+                        var data = Object.assign(order, promptData);
+                        data.cookies = cookies;
+
+                        // Do the download thingy
+                        downloader(data, () => {
+
+                            eachCb(null);
+                        });
+                    }, err2 => {
+                        if (err2) console.error(err2);
+                        else {
+                            console.log('Complete!');
+                            callback(orders);
+                        }
+                    });
+                }
+            });
         });
-
-
-        // callback(null, promptData);
-    });
-
-};
+}

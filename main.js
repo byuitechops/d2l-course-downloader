@@ -10,17 +10,13 @@ var dlCourse = require('./dlCourse.js');
 var path = require('path');
 var chalk = require('chalk');
 
-module.exports = (finalCb) => {
-
-    var domain = promptData.subdomain === 'yes' ? 'pathway' : 'byui';
-    console.log('Domain set to: ' + domain);
-    console.log(promptData);
+module.exports = (data, finalCb) => {
 
     /* Determine settings */
     var settings = {
-        userName: promptData.userName,
+        userName: data.userName,
         userNameSelector: '#userName',
-        password: promptData.password,
+        password: data.password,
         passwordSelector: '#password',
         doneButtonSelector: '[primary="primary"]',
         loginURL: `https://${domain}.brightspace.com/d2l/login?noredirect=1`,
@@ -29,86 +25,63 @@ module.exports = (finalCb) => {
 
     console.log(settings);
 
-    function getCSVData(callback) {
-        /* Read in the CSV */
-        fs.readFile(path.join('.', promptData.source), 'utf8', (err, data) => {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else {
-                /* Parse the CSV */
-                var csvData = d3.csvParse(data);
-                callback(null, csvData);
-            }
-        });
-    }
-
-    function downloadCourses(courseList) {
-        /* Get them cookies */
-        getCookies(settings, (errorCookies, cookies) => {
-            if (errorCookies) {
-                console.log(chalk.red(errorCookies));
-                return;
-            } else {
-                /* Set parameters for download */
-                var courses = courseList.map(course => {
-                    return {
-                        domain: domain,
-                        ou: course.OU,
-                        name: '',
-                        nightmareCookies: cookies,
-                        loginURL: settings.loginURL,
-                        userName: promptData.userName,
-                        password: promptData.password,
-                        devtools: true,
-                    };
-                });
-                /* Download ALL the courses */
-                asyncLib.mapLimit(courses, promptData.maxConcurrent, dlCourse, (
-                    mapError, results) => {
-                    var stringified = results.map(result => JSON.stringify(
-                        result));
-                    fs.writeFile('./results.json', stringified, errorFS => {
-                        if (errorFS) {
-                            console.log(chalk.red(errorFS));
-                        } else {
-                            var failList = results.filter(course =>
-                                !course.success);
-                            if (failList.length === 0) {
-                                console.log(chalk.green(
-                                    `All ${chalk.yellow(results.length)} courses successfully downloaded.`
-                                ));
-                            } else {
-                                console.log(chalk.redBright(
-                                    `These ${chalk.red(failList.length)} courses failed to download:`
-                                ));
-                                console.log(failList);
-                            }
-                        }
-                        /* Call this here? And pass back location of exports folder..*/
-                        finalCb(results);
-                    });
-                });
-            }
-        });
-    }
-
-    if (promptData.source.includes('.csv')) {
-        console.log('CSV');
-        console.log(promptData.source);
-        getCSVData((d3Error, csvData) => {
-            if (d3Error) {
-                console.error(d3Error);
-                return;
-            } else {
-                downloadCourses(csvData);
-            }
-        });
+    if (data.platform === 'Campus' ||
+        data.platform === 'Online') {
+        data.platform = 'byui';
     } else {
-        console.log('NO CSV');
-        console.log(promptData.source);
-        downloadCourses([{
-            OU: promptData.source
-        }]);
+        data.platform = 'pathway';
     }
+
+    var setup = {
+        domain: data.platform,
+        ou: data.courseOU,
+        name: '',
+        nightmareCookies: data.cookies,
+        loginURL: settings.loginURL,
+        userName: data.userName,
+        password: data.password,
+        devtools: true,
+    };
+
+    // function downloadCourse() {
+        dlCourse(settings, (err, courseObj) => {
+            if (err) console.error(err);
+            else {
+                console.log(courseObj);
+            }
+        });
+    // }
+    // function downloadCourses(courseList) {
+    //     /* Get them cookies */
+    //
+    //             /* Download ALL the courses */
+    //             asyncLib.mapLimit(courses, data.maxConcurrent, dlCourse, (
+    //                 mapError, results) => {
+    //                 var stringified = results.map(result => JSON.stringify(
+    //                     result));
+    //                 fs.writeFile('./results.json', stringified, errorFS => {
+    //                     if (errorFS) {
+    //                         console.log(chalk.red(errorFS));
+    //                     } else {
+    //                         var failList = results.filter(course =>
+    //                             !course.success);
+    //                         if (failList.length === 0) {
+    //                             console.log(chalk.green(
+    //                                 `All ${chalk.yellow(results.length)} courses successfully downloaded.`
+    //                             ));
+    //                         } else {
+    //                             console.log(chalk.redBright(
+    //                                 `These ${chalk.red(failList.length)} courses failed to download:`
+    //                             ));
+    //                             console.log(failList);
+    //                         }
+    //                     }
+    //                     /* Call this here? And pass back location of exports folder..*/
+    //                     finalCb(results);
+    //                 });
+    //             });
+    //         }
+    //     });
+    // }
+
 }
