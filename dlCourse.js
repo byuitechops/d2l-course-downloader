@@ -121,7 +121,7 @@ module.exports = (settings, callback) => {
         doneButtonSelector: 'button[primary="primary"]',
         clickToDL: 'div .dco_c a'
     }
-    //console.log('Settings', settings);
+    console.log('Settings', settings);
     nightmare
         .downloadManager()
         //go to the log in page
