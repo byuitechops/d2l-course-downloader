@@ -56,7 +56,6 @@ module.exports = (orders, callback) => {
                 asyncLib.map(orders, (order, eachCb) => {
                     // Combine all the pieces
                     data = Object.assign(userCookies, order, promptData, settings);
-                    console.log(data);
                     downloader(data, (err3, courseObj) => {
                         if (err3) console.error(err3);
                         else {
