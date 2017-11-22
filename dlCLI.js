@@ -65,7 +65,7 @@ module.exports = (orders, callback) => {
                 }, (err4, resultCourses) => {
                     if (err4) console.error(err4);
                     else {
-                        callback(null, resultCourses)
+                        callback(resultCourses);
                     }
                 });
             }
