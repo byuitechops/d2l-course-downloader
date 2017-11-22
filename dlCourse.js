@@ -141,6 +141,6 @@ module.exports = (settings, callback) => {
             settings.name = name;
             continueDownload(nightmare);
         }).catch((e) => {
-            console.log(e);
+            console.error(e);
         });
 }

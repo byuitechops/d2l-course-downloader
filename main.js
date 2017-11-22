@@ -27,7 +27,7 @@ module.exports = (data, finalCb) => {
     console.log(settings);
 
     var setup = {
-        domain: data.platform,
+        domain: domain,
         ou: data.courseOU,
         name: '',
         nightmareCookies: data.cookies,
