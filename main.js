@@ -12,6 +12,12 @@ var chalk = require('chalk');
 
 module.exports = (data, finalCb) => {
 
+    var domain = () => {
+        if (data.platform === 'campus' || data.platform === 'online') {
+            return 'byui';
+        } else return 'pathway';
+    }
+
     /* Determine settings */
     var settings = {
         userName: data.userName,

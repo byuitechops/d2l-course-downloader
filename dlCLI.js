@@ -45,7 +45,6 @@ module.exports = (orders, callback) => {
 
         getCookies(settings, (errorCookies, cookies) => {
             if (errorCookies) {
-                console.log('ERROR');
                 console.log(chalk.red(errorCookies));
                 return;
             } else {
@@ -63,8 +62,6 @@ module.exports = (orders, callback) => {
                     });
                 });
             }
-
-
         });
     });
 }
