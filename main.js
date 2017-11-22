@@ -12,7 +12,7 @@ var chalk = require('chalk');
 
 module.exports = (data, finalCb) => {
 
-    var domain = data.platform === 'pathway' ? 'pathway':'byui';
+    var domain = data.platform === 'pathway' ? 'pathway' : 'byui';
 
     /* Determine settings */
     var settings = {
@@ -38,45 +38,10 @@ module.exports = (data, finalCb) => {
     };
     console.log(setup);
 
-    // function downloadCourse() {
-        dlCourse(setup, (err, courseObj) => {
-            if (err) console.error(err);
-            else {
-                console.log(courseObj);
-            }
-        });
-    // }
-    // function downloadCourses(courseList) {
-    //     /* Get them cookies */
-    //
-    //             /* Download ALL the courses */
-    //             asyncLib.mapLimit(courses, data.maxConcurrent, dlCourse, (
-    //                 mapError, results) => {
-    //                 var stringified = results.map(result => JSON.stringify(
-    //                     result));
-    //                 fs.writeFile('./results.json', stringified, errorFS => {
-    //                     if (errorFS) {
-    //                         console.log(chalk.red(errorFS));
-    //                     } else {
-    //                         var failList = results.filter(course =>
-    //                             !course.success);
-    //                         if (failList.length === 0) {
-    //                             console.log(chalk.green(
-    //                                 `All ${chalk.yellow(results.length)} courses successfully downloaded.`
-    //                             ));
-    //                         } else {
-    //                             console.log(chalk.redBright(
-    //                                 `These ${chalk.red(failList.length)} courses failed to download:`
-    //                             ));
-    //                             console.log(failList);
-    //                         }
-    //                     }
-    //                     /* Call this here? And pass back location of exports folder..*/
-    //                     finalCb(results);
-    //                 });
-    //             });
-    //         }
-    //     });
-    // }
-
+    dlCourse(setup, (err, courseObj) => {
+        if (err) finalCb(err, courseObj);
+        else {
+            finalCb(null, courseObj);
+        }
+    });
 }

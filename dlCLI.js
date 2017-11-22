@@ -53,13 +53,21 @@ module.exports = (orders, callback) => {
                     cookies: cookies
                 };
 
-                asyncLib.each(orders, (order, eachCb) => {
+                asyncLib.map(orders, (order, eachCb) => {
                     // Combine all the pieces
                     data = Object.assign(userCookies, order, promptData, settings);
                     console.log(data);
-                    downloader(data, () => {
-                        eachCb(null);
+                    downloader(data, (err3, courseObj) => {
+                        if (err3) console.error(err3);
+                        else {
+                            eachCb(null, courseObj);
+                        }
                     });
+                }, (err4, resultCourses) => {
+                    if (err4) console.error(err4);
+                    else {
+                        callback(null, resultCourses)
+                    }
                 });
             }
         });
