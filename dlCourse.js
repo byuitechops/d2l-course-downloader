@@ -10,6 +10,16 @@ var fs = require('fs');
 var chalk = require('chalk');
 var fws = require('fixed-width-string');
 
+var selectors = {
+    checkAll: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
+    continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
+    includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
+    finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
+    doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
+    clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
+    imgSel: `table img` // Finds checkmark image on the export summary page to know when it is done
+}
+
 //this is where the magic happens
 module.exports = (settings, callback) => {
     /* Continues the nightmare session after scraping the course name*/
@@ -27,7 +37,7 @@ module.exports = (settings, callback) => {
             .click(selectors.continue)
             //go to zipping proccess page
             .setWaitTimeout(30, 0, 0)
-            .wait(imgSel)
+            .wait(selectors.imgSel)
             .click('button[primary]:not([disabled="disabled"])')
             //be done and click finish
             //.setWaitTimeout(0, 40, 0)
@@ -112,15 +122,6 @@ module.exports = (settings, callback) => {
         }
     });
 
-    var selectors = {
-        checkAll: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
-        continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
-        includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
-        finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
-        doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
-        clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
-        imgSelc: `table img` // Finds checkmark image on the export summary page to know when it is done
-    }
     // console.log('Settings', settings);
     nightmare
         .downloadManager()
