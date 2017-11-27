@@ -9,6 +9,7 @@ var path = require('path');
 var fs = require('fs');
 var chalk = require('chalk');
 var fws = require('fixed-width-string');
+var reg = /https:\/\/s\.brightspace\.com\/lib\/bsi\/\d*\.\d*\.\d*-daylight\.\d*\/images\/tier1\/check\.svg/g
 
 //this is where the magic happens
 module.exports = (settings, callback) => {
@@ -27,7 +28,7 @@ module.exports = (settings, callback) => {
             .click(selectors.continue)
             //go to zipping proccess page
             .setWaitTimeout(30, 0, 0)
-            .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.6-daylight.8/images/tier1/check.svg"]')
+            .wait(`img[src="${reg}"]`)
             .click('button[primary]:not([disabled="disabled"])')
             //be done and click finish
             //.setWaitTimeout(0, 40, 0)
