@@ -38,7 +38,7 @@ module.exports = (settings, callback) => {
             //go to zipping proccess page
             .setWaitTimeout(30, 0, 0)
             .wait(selectors.imgSel)
-            .click('button[primary]:not([disabled="disabled"])')
+            .click('button[primary]')
             //be done and click finish
             //.setWaitTimeout(0, 40, 0)
             //go to export_summary
