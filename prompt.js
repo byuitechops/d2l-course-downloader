@@ -4,6 +4,7 @@
 const prompt = require('prompt');
 const main = require('./main.js');
 const chalk = require('chalk');
+const path = require('path');
 
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
@@ -28,7 +29,7 @@ var courseDomain = [{
     name: 'domain',
     description: chalk.cyanBright('Is this for Pathway?'),
     type: 'string',
-    default: 'byui',
+    default: 'no',
     required: true,
     message: 'Password cannot be empty.',
     before: (value) => {
@@ -40,9 +41,8 @@ var courseDomain = [{
     }
 }];
 
-
-var myFunction = function (userData, cb) {
-
+var downloadPrompt = function (userData, cb) {
+    userData.downloadLocation = path.resolve('.', userData.downloadLocation);
     function enterResponse(err, responses) {
         if (err) {
             console.error(err);
@@ -66,7 +66,6 @@ var myFunction = function (userData, cb) {
         }
     }
     checkValues();
-
 };
 
-module.exports = myFunction;
+module.exports = downloadPrompt;
