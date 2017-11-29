@@ -3,12 +3,11 @@
 
 const prompt = require('prompt');
 const main = require('./main.js');
-
 const chalk = require('chalk');
-
 
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
+
 var promptQuestions = [{
         name: 'username',
         type: 'string',
@@ -25,16 +24,49 @@ var promptQuestions = [{
         replace: '*',
         message: 'Password cannot be empty.'
     }];
-
-module.exports = (userData) => {
-    /* if not given username / password, get them */
-    if (!userData.username || !userData.password) {
-        prompt.get(promptQuestions, (responses) => {
-            userData.username = responses.username;
-            userData.password = responses.password;
-            main(userData);
-        });
-    } else {
-        main(userData);
+var courseDomain = [{
+    name: 'domain',
+    description: chalk.cyanBright('Is this for Pathway?'),
+    type: 'string',
+    default: 'byui',
+    required: true,
+    message: 'Password cannot be empty.',
+    before: (value) => {
+        if (value.toLowerCase() != 'yes' || value.toLowerCase() != 'y') {
+            return 'byui';
+        } else {
+            return 'pathway';
+        }
     }
+}];
+
+
+var myFunction = function (userData, cb) {
+
+    function enterResponse(err, responses) {
+        if (err) {
+            console.error(err);
+            cb(err, null);
+        }
+        var resKeys = Object.keys(responses);
+        resKeys.forEach((key) => {
+            userData[key] = responses[key];
+        });
+        checkValues();
+    }
+
+    function checkValues() {
+        /* if not given username / password, get them */
+        if (!userData.username || !userData.password) {
+            prompt.get(promptQuestions, enterResponse);
+        } else if (!userData.domain) {
+            prompt.get(courseDomain, enterResponse);
+        } else {
+             main(userData, cb);
+        }
+    }
+    checkValues();
+
 };
+
+module.exports = myFunction;
