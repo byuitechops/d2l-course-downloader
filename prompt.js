@@ -1,44 +1,40 @@
 /*eslint-env node, es6*/
 /*eslint no-console:1*/
 
-var prompt = require('prompt');
-var main = require('./main.js');
-var chalk = require('chalk');
+const prompt = require('prompt');
+const main = require('./main.js');
 
-const downloader = require('./')
-const gauntletPrompt = require('./gauntletPrompt.js');
-const singlePrompt = require('./singlePrompt.js');
-const multiPrompt = require('./multiPrompt.js');
+const chalk = require('chalk');
 
-const finalCallback = function (results) {
-    // console.log(results);
-}
 
-module.exports = {
-    singleDownload: function (callback) {
-        singlePrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
+prompt.message = chalk.whiteBright('');
+prompt.delimiter = chalk.whiteBright('');
+var promptQuestions = [{
+        name: 'username',
+        type: 'string',
+        description: chalk.cyanBright('Enter your username:'),
+        required: true,
+        message: 'Username cannot be empty.'
     },
-    multiDownload: function (callback) {
-        multiPrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
-    },
-    gauntletDownload: function (callback) {
-        gauntletPrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
-    },
-    uiDownload: function (promptData, callback) {
-        main(promptData, results => {
-            callback(results);
+    {
+        name: 'password',
+        description: chalk.cyanBright('Enter your password:'),
+        type: 'string',
+        required: true,
+        hidden: true,
+        replace: '*',
+        message: 'Password cannot be empty.'
+    }];
+
+module.exports = (userData) => {
+    /* if not given username / password, get them */
+    if (!userData.username || !userData.password) {
+        prompt.get(promptQuestions, (responses) => {
+            userData.username = responses.username;
+            userData.password = responses.password;
+            main(userData);
         });
-    },
-}
+    } else {
+        main(userData);
+    }
+};
