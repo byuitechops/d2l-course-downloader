@@ -25,6 +25,7 @@ var promptQuestions = [{
         replace: '*',
         message: 'Password cannot be empty.'
     }];
+
 var courseDomain = [{
     name: 'domain',
     description: chalk.cyanBright('Is this for Pathway?'),
@@ -42,7 +43,7 @@ var courseDomain = [{
 }];
 
 var downloadPrompt = function (userData, cb) {
-    userData.downloadLocation = path.resolve('.', userData.downloadLocation);
+    // userData.downloadLocation = path.resolve('.', userData.downloadLocation);
     function enterResponse(err, responses) {
         if (err) {
             console.error(err);
