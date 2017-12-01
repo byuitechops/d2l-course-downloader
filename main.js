@@ -18,7 +18,6 @@ module.exports = (userData, finalCb) => {
         userData.name = '';
 
         asyncLib.mapLimit(userData.ous, 10, (ou, callback) => {
-            console.log(userData.downloadLocation, userData.ous);
             userData.ou = ou;
             var dataClone = Object.assign({}, userData);
             dlCourse(dataClone, callback);
