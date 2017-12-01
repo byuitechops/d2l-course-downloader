@@ -14,7 +14,7 @@ module.exports = function getCookies(userData, cb) {
     var loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
     var afterLoginUrl = `https://${userData.domain}.brightspace.com/d2l/home`;
     var nightmarePrefs = {
-        show: true,
+        show: false,
         typeInterval: 20,
         alwaysOnTop: false
     };
