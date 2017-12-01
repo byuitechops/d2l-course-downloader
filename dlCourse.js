@@ -87,7 +87,6 @@ module.exports = (userData, callback) => {
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
             userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + '.zip');
-            console.log('LOCATION', userData.downloadLocation);
             nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
         if (state == "updated") {
