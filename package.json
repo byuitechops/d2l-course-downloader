@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/byuitechops/d2l-course-downloader#readme",
   "dependencies": {
-    "async": "^2.5.0",
+    "async": "^2.6.0",
     "chalk": "^2.3.0",
-    "d3-dsv": "^1.0.7",
+    "d3-dsv": "^1.0.8",
     "fixed-width-string": "^1.0.0",
     "fs": "0.0.1-security",
     "nightmare": "^2.10.0",
