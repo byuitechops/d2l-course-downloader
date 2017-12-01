@@ -1,7 +1,7 @@
 /*eslint-env node, browser, es6*/
 /*eslint no-unused-vars:0, no-console:0*/
 
-//set up the nightmare class
+/* set up the nightmare class */
 var Nightmare = require('nightmare');
 require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
@@ -10,9 +10,19 @@ var fs = require('fs');
 var chalk = require('chalk');
 var fws = require('fixed-width-string');
 
-//this is where the magic happens
-module.exports = (settings, callback) => {
-    /* Continues the nightmare session after scraping the course name*/
+var selectors = {
+    checkAll: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
+    continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
+    includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
+    finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
+    doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
+    clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
+    imgSel: `table img` // Finds checkmark image on the export summary page to know when it is done
+}
+
+/* this is where the magic happens */
+module.exports = (userData, callback) => {
+    /* Continues the nightmare session after scraping the course name */
     function continueDownload(nightmare2) {
         nightmare2
             //select all components to export
@@ -27,7 +37,8 @@ module.exports = (settings, callback) => {
             .click(selectors.continue)
             //go to zipping proccess page
             .setWaitTimeout(30, 0, 0)
-            .wait('img[src="https://s.brightspace.com/lib/bsi/10.7.6-daylight.8/images/tier1/check.svg"]')
+            .wait(selectors.imgSel)
+            .wait('button[primary]:not([disabled="disabled"])')
             .click('button[primary]:not([disabled="disabled"])')
             //be done and click finish
             //.setWaitTimeout(0, 40, 0)
@@ -40,9 +51,9 @@ module.exports = (settings, callback) => {
             .then(function () {
                 callback(null, {
                     success: true,
-                    name: settings.name,
-                    filePath: settings.filePath,
-                    ou: settings.ou,
+                    name: userData.name,
+                    downloadLocation: userData.downloadLocation,
+                    ou: userData.ou,
                     err: {}
                 });
             })
@@ -50,51 +61,39 @@ module.exports = (settings, callback) => {
                 console.log(chalk.red(error));
                 callback(null, {
                     success: false,
-                    name: settings.name,
-                    filePath: settings.filePath,
-                    ou: settings.ou,
+                    name: userData.name,
+                    downloadLocation: userData.downloadLocation,
+                    ou: userData.ou,
                     err: chalk.red(error)
                 });
             });
     }
 
 
-    //could do some varification that we have all that we need in settings
-    console.log(chalk.blue("Starting " + chalk.yellowBright(settings.name) + " Download: " + settings.ou))
+    //could do some varification that we have all that we need in userData
+    console.log(chalk.blue("Starting " + chalk.yellowBright(userData.name) + " Download: " + userData.ou))
 
     var nightmare,
         nightmarePrefs = {
-            show: settings.show || true,
+            show: true,
             typeInterval: 20,
             alwaysOnTop: false
             //waitTimeout: 20 * 60 * 1000
         };
-
-    if (settings.devTools) {
-        nightmarePrefs.openDevTools = {
-            mode: 'detach'
-        };
-    }
-
-    //make me a nightmare
+    /* make me a nightmare */
     nightmare = Nightmare(nightmarePrefs);
 
-    //set up what happens when we cause a download
+    /* set up what happens when we cause a download */
     nightmare.on('download', function (state, downloadItem) {
         if (state === 'started') {
-            //set the name and location of the course zip files
-            if (fs.existsSync('./node_modules/child-development-kit/D2LOriginal')) {
-                console.log('found');
-                settings.filePath = path.resolve('.', `./node_modules/child-development-kit/D2LOriginal/${settings.name}.zip`);
-            } else {
-                settings.filePath = path.resolve('.', `./D2LOriginal/${settings.name}.zip`);
-            }
-            nightmare.emit('download', settings.filePath, downloadItem);
+            userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + '.zip');
+            console.log('LOCATION', userData.downloadLocation);
+            nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
         if (state == "updated") {
             var getPercent = {
-                name: settings.name,
-                ou: settings.ou,
+                name: userData.name,
+                ou: userData.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
                 percent: Math.floor(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
             }
@@ -113,32 +112,26 @@ module.exports = (settings, callback) => {
         }
     });
 
-    var selectors = {
-        checkAll: 'input[name="checkAll"]',
-        continue: 'button[primary="primary"]',
-        includeCourseFiles: 'input[name="exportFiles"]',
-        finish: 'button[primary="primary"]',
-        doneButtonSelector: 'button[primary="primary"]',
-        clickToDL: 'div .dco_c a'
-    }
-    //console.log('Settings', settings);
+    // console.log('userData', userData);
     nightmare
         .downloadManager()
         //go to the log in page
-        .goto(settings.loginURL)
-        .cookies.set(settings.nightmareCookies)
+        .goto(userData.loginURL)
+        .cookies.set(userData.cookies)
         .setWaitTimeout(0, 30, 0)
         //go to import/export copy components of a specific course.
-        .goto('https://' + settings.domain +
-            '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + settings.ou)
+        .goto('https://' + userData.domain +
+            '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + userData.ou)
         .setWaitTimeout(0, 30, 0)
         .wait(selectors.checkAll)
-        .evaluate((settings) => {
+        .evaluate((userData) => {
             /* get the course name */
             return document.querySelectorAll('header div.d2l-navigation-s-header-logo-area>a')[1].innerHTML.split(':')[0];
-        }, settings)
+        }, userData)
         .then((name) => {
-            settings.name = name;
+            userData.name = name;
             continueDownload(nightmare);
+        }).catch((e) => {
+            console.error(e);
         });
 }

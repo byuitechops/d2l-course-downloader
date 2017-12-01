@@ -1,44 +1,72 @@
 /*eslint-env node, es6*/
 /*eslint no-console:1*/
 
-var prompt = require('prompt');
-var main = require('./main.js');
-var chalk = require('chalk');
+const prompt = require('prompt');
+const main = require('./main.js');
+const chalk = require('chalk');
+const path = require('path');
 
-const downloader = require('./')
-const gauntletPrompt = require('./gauntletPrompt.js');
-const singlePrompt = require('./singlePrompt.js');
-const multiPrompt = require('./multiPrompt.js');
+prompt.message = chalk.whiteBright('');
+prompt.delimiter = chalk.whiteBright('');
 
-const finalCallback = function (results) {
-    // console.log(results);
-}
+var promptQuestions = [{
+        name: 'username',
+        type: 'string',
+        description: chalk.cyanBright('Enter your username:'),
+        required: true,
+        message: 'Username cannot be empty.'
+    },
+    {
+        name: 'password',
+        description: chalk.cyanBright('Enter your password:'),
+        type: 'string',
+        required: true,
+        hidden: true,
+        replace: '*',
+        message: 'Password cannot be empty.'
+    }];
 
-module.exports = {
-    singleDownload: function (callback) {
-        singlePrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
-    },
-    multiDownload: function (callback) {
-        multiPrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
-    },
-    gauntletDownload: function (callback) {
-        gauntletPrompt((err, promptData) => {
-            main(promptData, results => {
-                callback(results);
-            });
-        })
-    },
-    uiDownload: function (promptData, callback) {
-        main(promptData, results => {
-            callback(results);
+var courseDomain = [{
+    name: 'domain',
+    description: chalk.cyanBright('Is this for Pathway?'),
+    type: 'string',
+    default: 'no',
+    required: true,
+    message: 'Password cannot be empty.',
+    before: (value) => {
+        if (value.toLowerCase() != 'yes' || value.toLowerCase() != 'y') {
+            return 'byui';
+        } else {
+            return 'pathway';
+        }
+    }
+}];
+
+var downloadPrompt = function (userData, cb) {
+    // userData.downloadLocation = path.resolve('.', userData.downloadLocation);
+    function enterResponse(err, responses) {
+        if (err) {
+            console.error(err);
+            cb(err, null);
+        }
+        var resKeys = Object.keys(responses);
+        resKeys.forEach((key) => {
+            userData[key] = responses[key];
         });
-    },
-}
+        checkValues();
+    }
+
+    function checkValues() {
+        /* if not given username / password, get them */
+        if (!userData.username || !userData.password) {
+            prompt.get(promptQuestions, enterResponse);
+        } else if (!userData.domain) {
+            prompt.get(courseDomain, enterResponse);
+        } else {
+             main(userData, cb);
+        }
+    }
+    checkValues();
+};
+
+module.exports = downloadPrompt;

@@ -1,19 +1,24 @@
-/*eslint-env node, es6*/
+/*eslint-env browser, node, es6*/
 /*eslint no-unused-vars:0, no-console:0*/
 
 //set up the nightmare class
 var Nightmare = require('nightmare');
 require('nightmare-helpers')(Nightmare);
 
+var userNameSelector = '#userName';
+var passwordSelector = '#password';
+var doneButtonSelector = '[primary="primary"]';
+
 //this is where the magic happens
-module.exports = function getCookies(settings, cb) {
-    console.log("Lets log in...");
+module.exports = function getCookies(userData, cb) {
+    var loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
+    var afterLoginUrl = `https://${userData.domain}.brightspace.com/d2l/home`;
     var nightmarePrefs = {
-        show: settings.show || true,
+        show: true,
         typeInterval: 20,
         alwaysOnTop: false
     };
-    //make nightmare with our settings
+    //make nightmare with our userData
     var nightmare = Nightmare(nightmarePrefs);
 
     function waitURL(url) {
@@ -23,15 +28,15 @@ module.exports = function getCookies(settings, cb) {
 
     nightmare
         //go to the log in page
-        .goto(settings.loginURL)
+        .goto(loginURL)
         //fill in the user name and password
-        .insert(settings.userNameSelector, settings.userName)
-        .insert(settings.passwordSelector, settings.password)
+        .insert(userNameSelector, userData.username)
+        .insert(passwordSelector, userData.password)
         //click the log in button
-        .click(settings.doneButtonSelector)
-        //logins have a lot of redirects so wait till we get to the right page
+        .click(doneButtonSelector)
+        // logins have a lot of redirects so wait till we get to the right page
         .wait(1500)
-        .wait(waitURL, 'https://byui.brightspace.com/d2l/home')
+        .wait(waitURL, afterLoginUrl)
         //now that we have logged in steal the cookies
         .cookies.get()
         .end()
