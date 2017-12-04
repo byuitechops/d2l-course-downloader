@@ -49,7 +49,6 @@ module.exports = (userData, callback) => {
 
             .end()
             .then(function () {
-                console.log(userData);
                 callback(null, {
                     success: true,
                     name: userData.name,
@@ -59,7 +58,6 @@ module.exports = (userData, callback) => {
                 });
             })
             .catch(function (error) {
-                console.log(userData);
                 console.log(chalk.red(error));
                 callback(null, {
                     success: false,
