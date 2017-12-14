@@ -75,7 +75,7 @@ module.exports = (userData, callback) => {
 
     var nightmare,
         nightmarePrefs = {
-            show: false,
+            show: true,
             typeInterval: 20,
             alwaysOnTop: false
             //waitTimeout: 20 * 60 * 1000
@@ -95,6 +95,14 @@ module.exports = (userData, callback) => {
                 ou: userData.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
                 percent: Math.floor(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
+            }
+            
+            /* if download is larger than 2gb, don't download it*/
+            var maxBytes = 2000000000;
+            if(downloadItem.totalBytes > maxBytes) {
+                // stop now...
+                console.log(`Course obesity is a real concern to us. Come back when your course is below ${maxBytes / 1000000000} GB`);
+                process.exit(1);
             }
             //print to the console where we are with the download
             //show % and name and ou
