@@ -75,7 +75,7 @@ module.exports = (userData, callback) => {
 
     var nightmare,
         nightmarePrefs = {
-            show: true,
+            show: false,
             typeInterval: 20,
             alwaysOnTop: false
             //waitTimeout: 20 * 60 * 1000
