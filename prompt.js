@@ -63,7 +63,8 @@ var downloadPrompt = function (userData, cb) {
         } else if (!userData.domain) {
             prompt.get(courseDomain, enterResponse);
         } else {
-             main(userData, cb);
+            console.log('Beginning download process...');
+            main(userData, cb);
         }
     }
     checkValues();
