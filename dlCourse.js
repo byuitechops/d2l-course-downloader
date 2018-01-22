@@ -11,7 +11,13 @@ var chalk = require('chalk');
 var fws = require('fixed-width-string');
 
 var selectors = {
-    checkAll: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
+    checkExport: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
+    contentSelector: 'input[name="includeContent"]',
+    contentOptSelector: 'input[name="contentOpt"]',
+    discussionSelector: 'input[name="includeDiscuss"]',
+    discussionOptSelector: 'input[name="discussOpt"]',
+    chkSelectAll: 'input[name="chkSelectAll"]',
+    lessonSelector: '',
     continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
     includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
     finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
@@ -22,14 +28,60 @@ var selectors = {
 
 /* this is where the magic happens */
 module.exports = (userData, callback) => {
+
+    function downloadPrep(nightmare2) {
+
+        if (!userData.lessonTitle) {
+            nightmare2
+                //select all components to export
+                .click(selectors.checkExport)
+                //click continue
+                .wait(selectors.continue)
+                .click(selectors.continue)
+                .then(() => {
+                    continueDownload(nightmare2);
+                });
+        } else {
+            lessonSelector = ``;
+
+            nightmare2
+                //select content to export
+                .wait(selectors.contentSelector)
+                .click(selectors.contentSelector)
+                .click(selectors.discussionSelector)
+                //click "individual items to export"
+                // .inject('js', './node_modules/d2l-course-downloader/inject.js')
+                .evaluate((selectors) => {
+                    $(selectors.contentOptSelector).click();
+                    $(selectors.discussionOptSelector).click();
+                    return 'Clicked!';
+                }, selectors)
+                .wait(5000)
+                //click continue
+                .click(selectors.continue)
+                //wait for the next page
+                .wait(selectors.chkSelectAll)
+                //find and click on the lesson we want
+                .evaluate((lessonTitle) => {
+                    var ID = $(`span:contains("${lessonTitle}")`).parent().attr('for');
+                    $(`#${ID}`).click();
+                    return 'Clicked!';
+                }, userData.lessonTitle)
+                // Continue on
+                .click(selectors.continue)
+                .then((result) => {
+                    continueDownload(nightmare2);
+                })
+                .catch(function (error) {
+                    console.log(chalk.red(error));
+                });
+        }
+
+    }
+
     /* Continues the nightmare session after scraping the course name */
     function continueDownload(nightmare2) {
         nightmare2
-            //select all components to export
-            .click(selectors.checkAll)
-            //click continue
-            .wait(selectors.continue)
-            .click(selectors.continue)
             //include Course Files in export
             .wait(selectors.includeCourseFiles)
             .check(selectors.includeCourseFiles)
@@ -137,7 +189,7 @@ module.exports = (userData, callback) => {
         }, userData)
         .then((name) => {
             userData.name = name;
-            continueDownload(nightmare);
+            downloadPrep(nightmare);
         }).catch((e) => {
             console.error(e);
         });

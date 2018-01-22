@@ -14,7 +14,8 @@ var promptQuestions = [{
         type: 'string',
         description: chalk.cyanBright('Enter your username:'),
         required: true,
-        message: 'Username cannot be empty.'
+        message: 'Username cannot be empty.',
+        default: 'cct_xacheiree'
     },
     {
         name: 'password',
