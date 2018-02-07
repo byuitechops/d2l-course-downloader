@@ -10,22 +10,21 @@ prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
 
 var promptQuestions = [{
-        name: 'username',
-        type: 'string',
-        description: chalk.cyanBright('Enter your username:'),
-        required: true,
-        message: 'Username cannot be empty.',
-        default: 'cct_xacheiree'
-    },
-    {
-        name: 'password',
-        description: chalk.cyanBright('Enter your password:'),
-        type: 'string',
-        required: true,
-        hidden: true,
-        replace: '*',
-        message: 'Password cannot be empty.'
-    }];
+    name: 'username',
+    type: 'string',
+    description: chalk.cyanBright('Enter your username:'),
+    required: true,
+    message: 'Username cannot be empty.'
+},
+{
+    name: 'password',
+    description: chalk.cyanBright('Enter your password:'),
+    type: 'string',
+    required: true,
+    hidden: true,
+    replace: '*',
+    message: 'Password cannot be empty.'
+}];
 
 var courseDomain = [{
     name: 'domain',
