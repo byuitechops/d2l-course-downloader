@@ -5,15 +5,24 @@ var asyncLib = require('async');
 var getCookies = require('./getCookies.js');
 var dlCourse = require('./dlCourse.js');
 var fs = require('fs');
+var path = require('path');
 
 module.exports = (userData, finalCb) => {
 
     var potentialDownloadLocation = path.resolve('.', userData.downloadLocation);
+    var files = [
+        'Conversion Test Gauntlet 1',
+        'Conversion Test Gauntlet 2',
+        'Conversion Test Gauntlet 3',
+        'Conversion Test Gauntlet 4'
+    ];
 
-    fs.readdir(potentialDownloadLocation, (err, files) => {
+    fs.readdir(potentialDownloadLocation, (err, foundFiles) => {        
         if (err) console.log(err);
-        if (files.includes(userData.name + '.zip')) {
-            console.log('File with the same name exists at download location - it will NOT be overwritten.');
+        if (foundFiles != null) {
+            if (foundFiles.includes(userData.name + '.zip')) {
+                console.log('File with the same name exists at download location - it will NOT be overwritten.');
+            }
         }
 
 
