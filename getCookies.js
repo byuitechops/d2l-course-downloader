@@ -11,6 +11,7 @@ var doneButtonSelector = '[primary="primary"]';
 
 //this is where the magic happens
 module.exports = function getCookies(userData, cb) {
+
     var loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
     var afterLoginUrl = `https://${userData.domain}.brightspace.com/d2l/home`;
     var nightmarePrefs = {
@@ -26,7 +27,7 @@ module.exports = function getCookies(userData, cb) {
         return regex.test(document.location.href);
     }
 
-    nightmare
+    return nightmare
         //go to the log in page
         .goto(loginURL)
         //fill in the user name and password
@@ -39,14 +40,5 @@ module.exports = function getCookies(userData, cb) {
         .wait(waitURL, afterLoginUrl)
         //now that we have logged in steal the cookies
         .cookies.get()
-        .end()
-        .then(function (cookies) {
-            //send the cookies back
-            console.log("Cookies Retrieved!");
-            cb(null, cookies);
-        })
-        //if anything errors it goes here. pass it back to the user
-        .catch(function (error) {
-            cb(error, null);
-        });
-}
+        .end();
+};

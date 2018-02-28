@@ -1,53 +1,46 @@
-/*eslint-env node, es6*/
-/*eslint no-console: 0*/
+const getCookies = require('./getCookies.js');
+const dlCourse = require('./dlCourse.js');
+const fs = require('fs');
 
-var asyncLib = require('async');
-var getCookies = require('./getCookies.js');
-var dlCourse = require('./dlCourse.js');
-var fs = require('fs');
-var path = require('path');
+module.exports = (userData) => {
 
-module.exports = (userData, finalCb) => {
+    /* Add the downlocation if it wasn't provided */
+    if (!userData.downloadLocation) {
+        userData.downloadLocation = './factory/originalZip';
+    }
 
-    var potentialDownloadLocation = path.resolve('.', userData.downloadLocation);
-    var files = [
-        'Conversion Test Gauntlet 1',
-        'Conversion Test Gauntlet 2',
-        'Conversion Test Gauntlet 3',
-        'Conversion Test Gauntlet 4'
-    ];
+    /* Set the domain value based on the platform */
+    if (userData.platform === 'online' || userData.platform === 'campus') {
+        userData.domain = 'byui';
+    } else {
+        userData.domain = 'pathway';
+    }
 
-    fs.readdir(potentialDownloadLocation, (err, foundFiles) => {        
-        if (err) console.log(err);
-        if (foundFiles != null) {
-            if (foundFiles.includes(userData.name + '.zip')) {
-                console.log('File with the same name exists at download location - it will NOT be overwritten.');
-            }
-        }
-
-
-        /* Determine settings */
-        getCookies(userData, (err, cookies) => {
-            if (err) {
-                finalCb(err);
-                return;
-            }
-            userData.cookies = cookies;
-            userData.loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
-            userData.name = '';
-
-            asyncLib.mapLimit(userData.ous, 10, (ou, callback) => {
-                userData.ou = ou;
-                var dataClone = Object.assign({}, userData);
-                dlCourse(dataClone, callback);
-            }, (err, courses) => {
+    /* If the "-e" flag is used, just find the first zip file and return it */
+    if (process.argv.includes('-e')) {
+        return new Promise((resolve, reject) => {
+            fs.readdir('./factory/originalZip', (err, files) => {
                 if (err) {
-                    finalCb(err);
+                    reject(err);
+                }
+
+                if (files) {
+                    userData.name = files.find(file => file.includes('.zip'));
+                    resolve(userData);
                 } else {
-                    finalCb(null, courses);
+                    reject(new Error('There aren\'t any course zips ready to be used.'));
                 }
             });
-
         });
-    });
+    }
+
+    console.log('Retrieving cookies...');
+    return getCookies(userData)
+        .then((cookies) => {
+            userData.cookies = cookies;
+            userData.loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
+            return userData;
+        })
+        .then(dlCourse)
+        .catch(console.error);
 };
