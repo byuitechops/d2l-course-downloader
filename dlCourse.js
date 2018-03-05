@@ -1,5 +1,6 @@
 /*eslint-env node, browser, es6*/
 /*eslint no-unused-vars:0, no-console:0*/
+/* global $ */
 
 /* set up the nightmare class */
 const readline = require('readline');
@@ -84,7 +85,6 @@ module.exports = (userData) => {
             console.log('\n');
             nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
-
         if (state == 'updated') {
             var getPercent = {
                 name: userData.name,
