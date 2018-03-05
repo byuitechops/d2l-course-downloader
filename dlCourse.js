@@ -1,5 +1,6 @@
 /*eslint-env node, browser, es6*/
 /*eslint no-unused-vars:0, no-console:0*/
+/* global $ */
 
 /* set up the nightmare class */
 var Nightmare = require('nightmare');
@@ -23,8 +24,8 @@ var selectors = {
     finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
     doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
     clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
-    imgSel: `table img` // Finds checkmark image on the export summary page to know when it is done
-}
+    imgSel: 'table img' // Finds checkmark image on the export summary page to know when it is done
+};
 
 /* this is where the magic happens */
 module.exports = (userData, callback) => {
@@ -42,7 +43,7 @@ module.exports = (userData, callback) => {
                     continueDownload(nightmare2);
                 });
         } else {
-            lessonSelector = ``;
+            var lessonSelector = '';
 
             nightmare2
                 //select content to export
@@ -123,7 +124,7 @@ module.exports = (userData, callback) => {
 
 
     //could do some varification that we have all that we need in userData
-    console.log(chalk.blue("Starting " + chalk.yellowBright(userData.name) + " Download: " + userData.ou))
+    console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Download: ' + userData.ou));
 
     var nightmare,
         nightmarePrefs = {
@@ -141,13 +142,13 @@ module.exports = (userData, callback) => {
             userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + '.zip');
             nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
-        if (state == "updated") {
+        if (state == 'updated') {
             var getPercent = {
                 name: userData.name,
                 ou: userData.ou,
                 divide: downloadItem.receivedBytes / downloadItem.totalBytes,
                 percent: Math.floor(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
-            }
+            };
             
             /* if download is larger than 2gb, don't download it*/
             var maxBytes = 2000000000;
@@ -159,14 +160,14 @@ module.exports = (userData, callback) => {
             //print to the console where we are with the download
             //show % and name and ou
             //show what it has but add the others in one line
-            console.log("Downloaded: ", fws(getPercent.ou, 6, {
-                    align: 'right'
-                }),
-                fws(chalk.yellow(getPercent.name), 36),
-                fws(chalk.blueBright(getPercent.percent + '%'), 4),
-                fws(chalk.grey("Bytes: " + downloadItem.receivedBytes + " / " + downloadItem.totalBytes), 40, {
-                    align: 'left'
-                })
+            console.log('Downloaded: ', fws(getPercent.ou, 6, {
+                align: 'right'
+            }),
+            fws(chalk.yellow(getPercent.name), 36),
+            fws(chalk.blueBright(getPercent.percent + '%'), 4),
+            fws(chalk.grey('Bytes: ' + downloadItem.receivedBytes + ' / ' + downloadItem.totalBytes), 40, {
+                align: 'left'
+            })
             );
         }
     });
@@ -193,4 +194,4 @@ module.exports = (userData, callback) => {
         }).catch((e) => {
             console.error(e);
         });
-}
+};

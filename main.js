@@ -10,12 +10,12 @@ var path = require('path');
 module.exports = (userData, finalCb) => {
 
     var potentialDownloadLocation = path.resolve('.', userData.downloadLocation);
-    var files = [
+    /* var files = [
         'Conversion Test Gauntlet 1',
         'Conversion Test Gauntlet 2',
         'Conversion Test Gauntlet 3',
         'Conversion Test Gauntlet 4'
-    ];
+    ]; */
 
     fs.readdir(potentialDownloadLocation, (err, foundFiles) => {        
         if (err) console.log(err);

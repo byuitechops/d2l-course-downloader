@@ -4,7 +4,7 @@
 const prompt = require('prompt');
 const main = require('./main.js');
 const chalk = require('chalk');
-const path = require('path');
+// const path = require('path');
 
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
