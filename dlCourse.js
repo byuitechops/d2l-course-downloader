@@ -82,7 +82,7 @@ module.exports = (userData) => {
 
         if (state === 'started') {
             userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + '.zip');
-            console.log('\n');
+            // console.log('\n');
             nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
         if (state == 'updated') {

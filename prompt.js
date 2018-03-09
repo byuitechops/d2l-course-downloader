@@ -2,29 +2,26 @@
 /*eslint no-console:1*/
 
 const prompt = require('prompt');
-const main = require('./main.js');
 const chalk = require('chalk');
-// const path = require('path');
-
 prompt.message = chalk.whiteBright('');
 prompt.delimiter = chalk.whiteBright('');
 
 var promptQuestions = [{
-        name: 'username',
-        type: 'string',
-        description: chalk.cyanBright('Enter your username:'),
-        required: true,
-        message: 'Username cannot be empty.'
-    },
-    {
-        name: 'password',
-        description: chalk.cyanBright('Enter your password:'),
-        type: 'string',
-        required: true,
-        hidden: true,
-        replace: '*',
-        message: 'Password cannot be empty.'
-    }
+    name: 'username',
+    type: 'string',
+    description: chalk.cyanBright('Enter your username:'),
+    required: true,
+    message: 'Username cannot be empty.'
+},
+{
+    name: 'password',
+    description: chalk.cyanBright('Enter your password:'),
+    type: 'string',
+    required: true,
+    hidden: true,
+    replace: '*',
+    message: 'Password cannot be empty.'
+}
 ];
 
 var courseDomain = [{
@@ -44,11 +41,10 @@ var courseDomain = [{
 }];
 
 var downloadPrompt = function (userData, cb) {
-    // userData.downloadLocation = path.resolve('.', userData.downloadLocation);
     function enterResponse(err, responses) {
         if (err) {
             console.error(err);
-            cb(err, null);
+            cb(err);
         }
         var resKeys = Object.keys(responses);
         resKeys.forEach((key) => {
@@ -65,7 +61,7 @@ var downloadPrompt = function (userData, cb) {
             prompt.get(courseDomain, enterResponse);
         } else {
             console.log('Beginning download process...');
-            main(userData, cb);
+            cb(null);
         }
     }
     checkValues();
