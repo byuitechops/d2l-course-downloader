@@ -17,14 +17,12 @@
   },
   "homepage": "https://github.com/byuitechops/d2l-course-downloader#readme",
   "dependencies": {
-    "async": "^2.6.0",
     "chalk": "^2.3.0",
-    "d3-dsv": "^1.0.8",
+    "cookie": "^0.3.1",
     "fixed-width-string": "^1.0.0",
-    "fs": "0.0.1-security",
-    "nightmare": "^2.10.0",
-    "nightmare-download-manager": "^0.2.4",
-    "nightmare-helpers": "git+https://github.com/byuitechops/nightmare-helpers.git",
-    "prompt": "^1.0.0"
+    "got": "^8.3.0",
+    "progress": "^2.0.0",
+    "prompt": "^1.0.0",
+    "puppeteer": "^1.2.0"
   }
 }

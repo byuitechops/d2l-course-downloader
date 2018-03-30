@@ -38,7 +38,6 @@ module.exports = (userData) => {
     return getCookies(userData)
         .then((cookies) => {
             userData.cookies = cookies;
-            userData.loginURL = `https://${userData.domain}.brightspace.com/d2l/login?noredirect=1`;
             return userData;
         })
         .then(dlCourse)
