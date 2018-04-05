@@ -111,8 +111,8 @@ module.exports = (userData) => {
             });
 
             /* Print the current status of the download */
-            process.stdout.clearLine();
-            process.stdout.cursorTo(0);
+            readline.clearLine();
+            readline.cursorTo(0);
             process.stdout.write(`Downloaded: ${OU} ${name} ${percent} ${bytes}`);
         }
     });
