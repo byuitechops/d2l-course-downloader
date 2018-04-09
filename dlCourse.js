@@ -3,7 +3,6 @@
 /* global $ */
 
 /* set up the nightmare class */
-const readline = require('readline');
 const Nightmare = require('nightmare');
 require('nightmare-download-manager')(Nightmare);
 require('nightmare-helpers')(Nightmare);
@@ -111,8 +110,8 @@ module.exports = (userData) => {
             });
 
             /* Print the current status of the download */
-            readline.clearLine();
-            readline.cursorTo(0);
+            process.stdout.clearLine();
+            process.stdout.cursorTo(0);
             process.stdout.write(`Downloaded: ${OU} ${name} ${percent} ${bytes}`);
         }
     });
