@@ -2,9 +2,10 @@ const puppeteer = require('puppeteer')
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs')
-const got = require('got')
 const cookie = require('cookie')
 const ProgressBar = require('progress')
+const request = require('request')
+const sanitize = require('sanitize-filename')
 
 var selectors = {
   checkExport: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
@@ -28,6 +29,7 @@ module.exports = async userData => {
   await page.setCookie(...userData.cookies)
   await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`)
   userData.name = await page.evaluate(() => document.querySelector('div.d2l-navigation-s-header-logo-area a.d2l-navigation-s-link:last-child').innerHTML.split(':')[0])
+  userData.name = sanitize(userData.name)
   
   console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Export & Download: ' + userData.D2LOU));
   
@@ -68,16 +70,17 @@ module.exports = async userData => {
 
   let bar;
 
-  await got.stream(downloadURL,{
-    headers:{
-      cookie: userData.cookies.map(c => cookie.serialize(c.name,c.value)).join('; ')
-    }
-  }).on('downloadProgress', progress => { // { percent, transferred, total }
-    // the first Go
-    if(!bar){
+  await new Promise((resolve,reject) => {
+    request({
+      url:downloadURL,
+      headers:{
+        cookie: userData.cookies.map(c => cookie.serialize(c.name,c.value)).join('; ')
+      }
+    }).on('response', res => {
+      var len = +res.headers['content-length']
       /* If download is larger than 2gb, don't download it*/
       var maxBytes = 2000000000;
-      if(progress.total > maxBytes){
+      if(len > maxBytes){
         console.log(`Course obesity is a real concern to us. Come back when your course is below ${maxBytes / 1000000000} GB`);
         process.exit(1);
       }
@@ -86,13 +89,15 @@ module.exports = async userData => {
         complete: '=',
         incomplete: ' ',
         width: 30,
-        total: progress.total
+        total: len
       });
-    }
 
-    bar.update(progress.percent)
+      res.on('data', chunk => bar.tick(chunk.length)).on('error', reject)
 
-  }).pipe(fs.createWriteStream(path.resolve('.', userData.downloadLocation, userData.name + '.zip')));
+    }).pipe(fs.createWriteStream(path.resolve('.', userData.downloadLocation, userData.name + '.zip'))).on('finish',resolve).on('error',reject)
+  })
+
+  delete userData.password
 
   return userData
 }
