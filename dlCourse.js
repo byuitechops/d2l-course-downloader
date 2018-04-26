@@ -81,7 +81,9 @@ module.exports = (userData) => {
 
         if (state === 'started') {
             userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + '.zip');
-            // console.log('\n');
+            if (fs.existsSync(userData.downloadLocation)) {
+                console.log('FILE EXISTS AT LOCATION WITH SAME NAME - IT WILL NOT BE OVERWRITTEN');
+            }
             nightmare.emit('download', userData.downloadLocation, downloadItem);
         }
         if (state == 'updated') {
