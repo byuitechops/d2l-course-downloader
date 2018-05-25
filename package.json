@@ -18,6 +18,7 @@
   "homepage": "https://github.com/byuitechops/d2l-course-downloader#readme",
   "dependencies": {
     "chalk": "^2.3.0",
+    "cli-spinner": "^0.2.8",
     "fixed-width-string": "^1.0.0",
     "progress": "^2.0.0",
     "prompt": "^1.0.0",

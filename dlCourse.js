@@ -22,7 +22,7 @@ var selectors = {
 };
 
 module.exports = async userData => {
-  const browser = await puppeteer.launch({headless:false})
+  const browser = await puppeteer.launch({headless:true})
   const page = await browser.newPage()
   await page.setCookie(...userData.cookies)
   await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`)
@@ -53,12 +53,16 @@ module.exports = async userData => {
     page.click(selectors.continue),
   ])
 
-  console.log('Exporting...')
-  
-  // Wait the course to export
+  // Wait the course to export (with some fun)
+  var spinner = new require('cli-spinner').Spinner('Exporting')
+  spinner.setSpinnerString(25)
+  spinner.start()
+
   await page.waitFor(selectors.finish,{
     timeout: 1000 * 60 * 10 // 10 minutes
   })
+
+  spinner.stop(true)
   
   // then click it
   await Promise.all([
