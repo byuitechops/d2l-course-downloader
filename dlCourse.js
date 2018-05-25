@@ -2,10 +2,8 @@ const puppeteer = require('puppeteer')
 const chalk = require('chalk')
 const path = require('path')
 const fs = require('fs')
-const cookie = require('cookie')
 const ProgressBar = require('progress')
 const request = require('request')
-const sanitize = require('sanitize-filename')
 
 var selectors = {
   checkExport: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
@@ -29,7 +27,7 @@ module.exports = async userData => {
   await page.setCookie(...userData.cookies)
   await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`)
   userData.name = await page.evaluate(() => document.querySelector('div.d2l-navigation-s-header-logo-area a.d2l-navigation-s-link:last-child').innerHTML.split(':')[0])
-  userData.name = sanitize(userData.name)
+  userData.name = userData.name.replace(/\/|\?|<|>|\\|:|\*|\|"/g,'')
   
   console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Export & Download: ' + userData.D2LOU));
   
@@ -74,8 +72,9 @@ module.exports = async userData => {
     request({
       url:downloadURL,
       headers:{
-        cookie: userData.cookies.map(c => cookie.serialize(c.name,c.value)).join('; ')
-      }
+        cookie: userData.cookies.map(c => c.name+'='+c.value).join('; ')
+      },
+      timeout: 1000 * 60 * 2 // 2 minutes
     }).on('response', res => {
       var len = +res.headers['content-length']
       /* If download is larger than 2gb, don't download it*/
