@@ -22,7 +22,7 @@ var selectors = {
 };
 
 module.exports = async userData => {
-  const browser = await puppeteer.launch({headless:true})
+  const browser = await puppeteer.launch({headless:false})
   const page = await browser.newPage()
   await page.setCookie(...userData.cookies)
   await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`)
@@ -53,8 +53,12 @@ module.exports = async userData => {
     page.click(selectors.continue),
   ])
 
+  console.log('Exporting...')
+  
   // Wait the course to export
-  await page.waitFor(selectors.finish)
+  await page.waitFor(selectors.finish,{
+    timeout: 1000 * 60 * 10 // 10 minutes
+  })
   
   // then click it
   await Promise.all([
@@ -73,8 +77,7 @@ module.exports = async userData => {
       url:downloadURL,
       headers:{
         cookie: userData.cookies.map(c => c.name+'='+c.value).join('; ')
-      },
-      timeout: 1000 * 60 * 2 // 2 minutes
+      }
     }).on('response', res => {
       var len = +res.headers['content-length']
       /* If download is larger than 2gb, don't download it*/
