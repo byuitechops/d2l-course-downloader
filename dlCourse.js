@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer')
-const chalk = require('chalk')
-const path = require('path')
-const fs = require('fs')
-const ProgressBar = require('progress')
-const request = require('request')
+const puppeteer = require('puppeteer');
+const chalk = require('chalk');
+const path = require('path');
+const fs = require('fs');
+const ProgressBar = require('progress');
+const request = require('request');
 
 var selectors = {
     checkExport: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
@@ -22,59 +22,64 @@ var selectors = {
 };
 
 module.exports = async userData => {
-    const browser = await puppeteer.launch({headless: true})
-    const page = await browser.newPage()
-    await page.setCookie(...userData.cookies)
-    await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`)
-    userData.name = await page.evaluate(() => document.querySelector('div.d2l-navigation-s-header-logo-area a.d2l-navigation-s-link:last-child').innerHTML.split(':')[0])
-    userData.name = userData.name.replace(/\/|\?|<|>|\\|:|\*|\|"/g, '')
+    const browser = await puppeteer.launch({headless: true});
+    const page = await browser.newPage();
+    await page.setCookie(...userData.cookies);
+    await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`);
+    userData.name = await page.evaluate(() => document.querySelector('div.d2l-navigation-s-header-logo-area a.d2l-navigation-s-link:last-child').innerHTML.split(':')[0]);
+    userData.name = userData.name.replace(/\/|\?|<|>|\\|:|\*|\|"/g, '');
+
+    if (userData.platform === 'campus') {
+        userData.name = `${userData.name} - ${userData.instructorEmail}`;
+    }
 
     console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Export & Download: ' + userData.D2LOU));
 
     // Check the export all
-    await page.click(selectors.checkExport)
+    await page.click(selectors.checkExport);
 
     // Click Continue
     await Promise.all([
         page.waitForNavigation(),
         page.click(selectors.continue),
-    ])
+    ]);
 
     // Check the check box if not checked
     await page.evaluate(selector => {
         if (!document.querySelector(selector).checked) {
-            document.querySelector(selector).click()
+            document.querySelector(selector).click();
         }
-    }, selectors.includeCourseFiles)
+    }, selectors.includeCourseFiles);
 
     // Click Continue
     await Promise.all([
         page.waitForNavigation(),
         page.click(selectors.continue),
-    ])
+    ]);
 
     // Wait the course to export (with some fun)
-    var spinner = new require('cli-spinner').Spinner('Exporting')
-    spinner.setSpinnerString(25)
-    spinner.start()
+    var spinner = new require('cli-spinner').Spinner('Exporting');
+    spinner.setSpinnerString(25);
+    spinner.start();
 
     await page.waitFor(selectors.finish, {
         timeout: 1000 * 60 * 10 // 10 minutes
-    })
+    });
 
-    spinner.stop(true)
+    spinner.stop(true);
 
     // then click it
     await Promise.all([
         page.waitForNavigation(),
         page.click(selectors.finish)
-    ])
+    ]);
 
-    const downloadURL = await page.evaluate(() => document.querySelector('.d2l-link-inline').href)
+    const downloadURL = await page.evaluate(() => document.querySelector('.d2l-link-inline').href);
 
-    await browser.close()
+    await browser.close();
 
     let bar;
+
 
     await new Promise((resolve, reject) => {
         request({
@@ -83,7 +88,7 @@ module.exports = async userData => {
                 cookie: userData.cookies.map(c => c.name + '=' + c.value).join('; ')
             }
         }).on('response', res => {
-            var len = +res.headers['content-length']
+            var len = +res.headers['content-length'];
             /* If download is larger than 2gb, don't download it*/
             var maxBytes = 2000000000;
             if (len > maxBytes) {
@@ -98,12 +103,12 @@ module.exports = async userData => {
                 total: len
             });
 
-            res.on('data', chunk => bar.tick(chunk.length)).on('error', reject)
+            res.on('data', chunk => bar.tick(chunk.length)).on('error', reject);
 
-        }).pipe(fs.createWriteStream(path.resolve('.', userData.downloadLocation, `${userData.name} - ${userData.instructorEmail}.zip`))).on('finish', resolve).on('error', reject)
-    })
+        }).pipe(fs.createWriteStream(path.resolve('.', userData.downloadLocation, `${userData.name}.zip`))).on('finish', resolve).on('error', reject);
+    });
 
-    delete userData.password
+    delete userData.password;
 
-    return userData
-}
+    return userData;
+};
