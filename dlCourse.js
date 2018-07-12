@@ -1,9 +1,15 @@
-const puppeteer = require('puppeteer');
-const chalk = require('chalk');
+/*eslint-env node, browser, es6*/
+/*eslint no-unused-vars:0, no-console:0*/
+/* global $ */
+
+/* set up the nightmare class */
+const Nightmare = require('nightmare');
+require('nightmare-download-manager')(Nightmare);
+require('nightmare-helpers')(Nightmare);
 const path = require('path');
 const fs = require('fs');
-const ProgressBar = require('progress');
-const request = require('request');
+const chalk = require('chalk');
+const fws = require('fixed-width-string');
 
 var selectors = {
     checkExport: 'input[name="checkAll"]', // Finds the button to check all checkboxes when selecting content
@@ -15,100 +21,130 @@ var selectors = {
     lessonSelector: '',
     continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
     includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
-    finish: 'button[primary="primary"]:not([disabled="disabled"])', // Finds the "Finish" button after exporting
+    finish: 'button[primary="primary"]', // Finds the "Finish" button after exporting
     doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
     clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
     imgSel: 'table img' // Finds checkmark image on the export summary page to know when it is done
 };
 
-module.exports = async userData => {
-    const browser = await puppeteer.launch({headless: true});
-    const page = await browser.newPage();
-    await page.setCookie(...userData.cookies);
-    await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`);
-    userData.name = await page.evaluate(() => document.querySelector('div.d2l-navigation-s-header-logo-area a.d2l-navigation-s-link:last-child').innerHTML.split(':')[0]);
-    userData.name = userData.name.replace(/\/|\?|<|>|\\|:|\*|\|"/g, '');
+/* this is where the magic happens */
+module.exports = (userData) => {
 
-    if (userData.platform === 'campus') {
-        userData.name = `${userData.name} - ${userData.instructorEmail}`;
+    var nightmare;
+    var nightmarePrefs = {
+        show: false,
+        typeInterval: 20,
+        alwaysOnTop: false
+    };
+
+    /* Build the nightmare instance */
+    nightmare = Nightmare(nightmarePrefs);
+
+    /* Continues the nightmare session after scraping the course name and navigating to the right page */
+    function continueDownload(nightmare2) {
+        return nightmare2
+            //select all components to export
+            .click(selectors.checkExport)
+            //click continue
+            .wait(selectors.continue)
+            .click(selectors.continue)
+            //include Course Files in export
+            .wait(selectors.includeCourseFiles)
+            .check(selectors.includeCourseFiles)
+            //go to confirm page
+            .click(selectors.continue)
+            //go to zipping proccess page
+            .setWaitTimeout(30, 0, 0)
+            .wait(selectors.imgSel)
+            .wait('button[primary]:not([disabled="disabled"])')
+            .click('button[primary]:not([disabled="disabled"])')
+            //be done and click finish
+            //.setWaitTimeout(0, 40, 0)
+            //go to export_summary
+            .wait(selectors.clickToDL)
+            .click(selectors.clickToDL)
+            .waitDownloadsComplete()
+            .end()
+            .then(function () {
+                console.log('\n');
+                delete userData.password;
+                return userData;
+            })
+            .catch(function (error) {
+                console.log(chalk.red(error));
+                return userData;
+            });
     }
 
-    console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Export & Download: ' + userData.D2LOU));
+    /* Set up what happens when we trigger a download */
+    nightmare.on('download', function (state, downloadItem) {
 
-    // Check the export all
-    await page.click(selectors.checkExport);
-
-    // Click Continue
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click(selectors.continue),
-    ]);
-
-    // Check the check box if not checked
-    await page.evaluate(selector => {
-        if (!document.querySelector(selector).checked) {
-            document.querySelector(selector).click();
-        }
-    }, selectors.includeCourseFiles);
-
-    // Click Continue
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click(selectors.continue),
-    ]);
-
-    // Wait the course to export (with some fun)
-    var spinner = new require('cli-spinner').Spinner('Exporting');
-    spinner.setSpinnerString(25);
-    spinner.start();
-
-    await page.waitFor(selectors.finish, {
-        timeout: 1000 * 60 * 10 // 10 minutes
-    });
-
-    spinner.stop(true);
-
-    // then click it
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click(selectors.finish)
-    ]);
-
-    const downloadURL = await page.evaluate(() => document.querySelector('.d2l-link-inline').href);
-
-    await browser.close();
-
-    let bar;
-
-
-    await new Promise((resolve, reject) => {
-        request({
-            url: downloadURL,
-            headers: {
-                cookie: userData.cookies.map(c => c.name + '=' + c.value).join('; ')
+        if (state === 'started') {
+            console.log(userData);
+            let halfName = '.zip';
+            if (userData.instructorEmail) {
+                halfName = ` - ${userData.instructorEmail}.zip`;
             }
-        }).on('response', res => {
-            var len = +res.headers['content-length'];
+            userData.downloadLocation = path.resolve('.', userData.downloadLocation, userData.name + halfName);
+            if (fs.existsSync(userData.downloadLocation)) {
+                console.log('FILE EXISTS AT LOCATION WITH SAME NAME - IT WILL NOT BE OVERWRITTEN');
+            }
+            nightmare.emit('download', userData.downloadLocation, downloadItem);
+        }
+        if (state == 'updated') {
+            var getPercent = {
+                name: userData.name,
+                D2LOU: userData.D2LOU,
+                divide: downloadItem.receivedBytes / downloadItem.totalBytes,
+                percent: Math.floor(downloadItem.receivedBytes / downloadItem.totalBytes * 100)
+            };
+
             /* If download is larger than 2gb, don't download it*/
             var maxBytes = 2000000000;
-            if (len > maxBytes) {
+            if (downloadItem.totalBytes > maxBytes) {
+                // stop now...
                 console.log(`Course obesity is a real concern to us. Come back when your course is below ${maxBytes / 1000000000} GB`);
                 process.exit(1);
             }
 
-            bar = new ProgressBar('Downloading [:bar] :rate/bps :percent :etas', {
-                complete: '=',
-                incomplete: ' ',
-                width: 30,
-                total: len
+            var name = fws(chalk.yellow(getPercent.name), 36);
+            var percent = fws(chalk.blueBright(getPercent.percent + '%'), 4);
+            var OU = fws(getPercent.D2LOU, 6, {
+                align: 'right'
+            });
+            var bytes = fws(chalk.grey('Bytes: ' + downloadItem.receivedBytes + '' / '' + downloadItem.totalBytes), 40, {
+                align: 'left'
             });
 
-            res.on('data', chunk => bar.tick(chunk.length)).on('error', reject);
-
-        }).pipe(fs.createWriteStream(path.resolve('.', userData.downloadLocation, `${userData.name}.zip`))).on('finish', resolve).on('error', reject);
+            /* Print the current status of the download */
+            process.stdout.clearLine();
+            process.stdout.cursorTo(0);
+            process.stdout.write(`Downloaded: ${OU} ${name} ${percent} ${bytes}`);
+        }
     });
 
-    delete userData.password;
-
-    return userData;
+    /* This first step gets the course name, alongside setting up the download */
+    return nightmare
+        .downloadManager()
+        //go to the log in page
+        .goto(userData.loginURL)
+        .cookies.set(userData.cookies)
+        .setWaitTimeout(0, 30, 0)
+        //go to import/export copy components of a specific course.
+        .goto('https://' + userData.domain +
+            '.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=' + userData.D2LOU)
+        .setWaitTimeout(0, 30, 0)
+        .wait(selectors.checkAll)
+        .evaluate((userData) => {
+            /* get the course name */
+            return document.querySelectorAll('header div.d2l-navigation-s-header-logo-area>a')[1].innerHTML.split(':')[0];
+        }, userData)
+        .then((name) => {
+            userData.name = name;
+            //could do some varification that we have all that we need in userData
+            console.log(chalk.blue('Starting ' + chalk.yellowBright(userData.name) + ' Export & Download: ' + userData.D2LOU));
+            return continueDownload(nightmare);
+        }).catch((e) => {
+            console.error(e);
+        });
 };
