@@ -126,7 +126,7 @@ module.exports = (userData) => {
     return nightmare
         .downloadManager()
         //go to the log in page
-        .goto(userData.loginURL)
+        .goto(`https://${userData.domain}.brightspace.com/d2l/login?noredirect=true`)
         .cookies.set(userData.cookies)
         .setWaitTimeout(0, 30, 0)
         //go to import/export copy components of a specific course.
