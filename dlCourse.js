@@ -80,7 +80,6 @@ module.exports = (userData) => {
     nightmare.on('download', function (state, downloadItem) {
 
         if (state === 'started') {
-            console.log(userData);
             let halfName = '.zip';
             if (userData.instructorEmail) {
                 halfName = ` - ${userData.instructorEmail}.zip`;
