@@ -13,16 +13,18 @@ var selectors = {
     discussionOptSelector: 'input[name="discussOpt"]',
     chkSelectAll: 'input[name="chkSelectAll"]',
     lessonSelector: '',
-    continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
+    continue: 'button[primary]', // Finds the "Contine" button after choosing what to export
     includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
-    finish: 'button[primary="primary"]:not([disabled="disabled"])', // Finds the "Finish" button after exporting
-    doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
+    finish: 'button[primary]:not([disabled])', // Finds the "Finish" button after exporting
+    doneButtonSelector: 'button[primary]', // Finds the "Done" button after downloading
     clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
     imgSel: 'table img' // Finds checkmark image on the export summary page to know when it is done
 };
 
 module.exports = async userData => {
-    const browser = await puppeteer.launch({headless: true});
+    const browser = await puppeteer.launch({
+        headless: true
+    });
     const page = await browser.newPage();
     await page.setCookie(...userData.cookies);
     await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`);
@@ -40,8 +42,8 @@ module.exports = async userData => {
 
     // Click Continue
     await Promise.all([
-        page.waitForNavigation(),
         page.click(selectors.continue),
+        page.waitForNavigation()
     ]);
 
     // Check the check box if not checked
@@ -54,7 +56,7 @@ module.exports = async userData => {
     // Click Continue
     await Promise.all([
         page.waitForNavigation(),
-        page.click(selectors.continue),
+        page.click(selectors.continue)
     ]);
 
     // Wait the course to export (with some fun)
