@@ -22,7 +22,9 @@ var selectors = {
 };
 
 module.exports = async userData => {
-    const browser = await puppeteer.launch({headless: true});
+    const browser = await puppeteer.launch({
+        headless: true
+    });
     const page = await browser.newPage();
     await page.setCookie(...userData.cookies);
     await page.goto(`https://${userData.domain}.brightspace.com/d2l/lms/importExport/export/export_select_components.d2l?ou=${userData.D2LOU}`);
@@ -40,8 +42,8 @@ module.exports = async userData => {
 
     // Click Continue
     await Promise.all([
-        page.waitForNavigation(),
         page.click(selectors.continue),
+        page.waitForNavigation()
     ]);
 
     // Check the check box if not checked
@@ -54,7 +56,7 @@ module.exports = async userData => {
     // Click Continue
     await Promise.all([
         page.waitForNavigation(),
-        page.click(selectors.continue),
+        page.click(selectors.continue)
     ]);
     
     // Wait the course to export (with some fun)
