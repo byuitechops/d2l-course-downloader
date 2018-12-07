@@ -13,10 +13,10 @@ var selectors = {
     discussionOptSelector: 'input[name="discussOpt"]',
     chkSelectAll: 'input[name="chkSelectAll"]',
     lessonSelector: '',
-    continue: 'button[primary="primary"]', // Finds the "Contine" button after choosing what to export
+    continue: 'button[primary]', // Finds the "Contine" button after choosing what to export
     includeCourseFiles: 'input[name="exportFiles"]', // Finds the "Include course files" checkbox
-    finish: 'button[primary="primary"]:not([disabled="disabled"])', // Finds the "Finish" button after exporting
-    doneButtonSelector: 'button[primary="primary"]', // Finds the "Done" button after downloading
+    finish: 'button[primary]:not([disabled])', // Finds the "Finish" button after exporting
+    doneButtonSelector: 'button[primary]', // Finds the "Done" button after downloading
     clickToDL: 'div .dco_c a', // Finds the "Click here to download Zip" link when done exporting
     imgSel: 'table img' // Finds checkmark image on the export summary page to know when it is done
 };
@@ -50,30 +50,29 @@ module.exports = async userData => {
             document.querySelector(selector).click();
         }
     }, selectors.includeCourseFiles);
-
+    
     // Click Continue
     await Promise.all([
         page.waitForNavigation(),
         page.click(selectors.continue),
     ]);
-
+    
     // Wait the course to export (with some fun)
     var spinner = new require('cli-spinner').Spinner('Exporting');
     spinner.setSpinnerString(25);
     spinner.start();
-
     await page.waitFor(selectors.finish, {
         timeout: 1000 * 60 * 10 // 10 minutes
     });
-
+    
     spinner.stop(true);
-
+    
     // then click it
     await Promise.all([
         page.waitForNavigation(),
         page.click(selectors.finish)
     ]);
-
+    
     const downloadURL = await page.evaluate(() => document.querySelector('.d2l-link-inline').href);
 
     await browser.close();

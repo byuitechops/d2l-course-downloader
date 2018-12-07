@@ -67,4 +67,4 @@ var downloadPrompt = function (userData, cb) {
     checkValues();
 };
 
-module.exports = downloadPrompt;
+module.exports = downloadPrompt; 
