@@ -65,7 +65,12 @@ module.exports = async userData => {
     spinner.start();
     await page.waitFor(selectors.finish, {
         timeout: 1000 * 60 * 10 // 10 minutes
-    });
+    }).catch(e => {
+        spinner.stop(true);
+        console.error(chalk.red('Course download exceeded timeout, probably too large of a course'))
+        console.error(chalk.red('Shutting Down...'))
+        browser.close().then(() => process.abort())
+    })
     
     spinner.stop(true);
     
