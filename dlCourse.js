@@ -69,7 +69,7 @@ module.exports = async userData => {
         spinner.stop(true);
         console.error(chalk.red('Course download exceeded timeout, probably too large of a course'))
         console.error(chalk.red('Shutting Down...'))
-        browser.close().then(() => process.abort())
+        browser.close().then(() => reject(e))
     })
     
     spinner.stop(true);
